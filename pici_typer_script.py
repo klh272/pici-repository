@@ -15,20 +15,20 @@ from Bio import SeqIO
 
 # read in BLAST alignment output
 df = pd.read_csv('BLAST_results.out', sep='\t', header = None)
-
-# take the max identity % (column "2") for each alignment
-condensed_df = df.drop_duplicates([0])
-condensed_df.reset_index(drop=True, inplace=True)
-condensed_df.head()
-
 # read in fasta file
 record = SeqIO.read("all.fna", "fasta")
 
+# take the max identity % (column "2") for each alignment and drop the duplicates
+condensed_df = df.sort_values([2], ascending=False).drop_duplicates([0]).sort_index()
+condensed_df.reset_index(drop=True, inplace=True)
+condensed_df.head()
 # store ID for output file
 file_name = record.id
 
-def get_locations(file, key_word):
 
+
+def get_locations(file, key_word):
+  """Returns the locations of where the gene is found in the genome"""
   lines = open(file).readlines()
 
   prot_list = []
@@ -38,10 +38,10 @@ def get_locations(file, key_word):
   
   b = [idx for i in key_word.split() for idx, j in enumerate(prot_list) if i in j]
 
-  result = re.search('(?<=\#\ )(.*?)(?=\ \#)', prot_list[b[0]])
-  start = int(result.group(1))
-  result = re.search('(?:.*?\#\ ){2}(.*?)(?=\ \#)', prot_list[b[0]])
-  end = int(result.group(1))
+  result1 = re.search('(?<=\#\ )(.*?)(?=\ \#)', prot_list[b[0]])
+  start = int(result1.group(1))
+  result2 = re.search('(?:.*?\#\ ){2}(.*?)(?=\ \#)', prot_list[b[0]])
+  end = int(result2.group(1))
 
   return start, end
 
@@ -56,6 +56,8 @@ def range_subset(range1, range2):
     if len(range1) > 1 and range1.step % range2.step:
         return False  # must have a single value or integer multiple step
     return range1.start in range2 and range1[-1] in range2
+
+
 
 # lists to hold PICI headers and sequences for fasta output
 name_list = []
@@ -89,6 +91,7 @@ for i in range(len(condensed_df)):
       # To stop current iteration if PICI is found (stop_loop = True)
       stop_loop = False
 
+
       #####################################################
       # FIRST search for co-localized alpA... determines G-
       ##################################################### 
@@ -103,43 +106,55 @@ for i in range(len(condensed_df)):
         elif condensed_df.iloc[k,1].startswith('alpA'):
           alpA_prot_num = int((condensed_df.iloc[k,0]).split('_')[-1])
           # check to see if it is within 1-4 genes away from the integrase  
-          if alpA_prot_num in range(alpA_low_lim_forward, alpA_high_lim_forward) or range(alpA_low_lim_backward, alpA_high_lim_backward):
+          if alpA_prot_num in range(alpA_low_lim_forward, alpA_high_lim_forward) or alpA_prot_num in range(alpA_high_lim_backward, alpA_low_lim_backward):
 
             # Get protein locations in host
             # get the location of alpA and see if pri-rep is within 25 kb to left or right (50kb total)
             int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
             alpA_location_start, alpA_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
             print('\nBeginning G- PICI determination...')
-            print('Int start:', int_location_start)
-            print('Int end:',int_location_end)
-            print('alpA start:',alpA_location_start)
-            print('alpA end:',alpA_location_end)
+            print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
+            print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
+            print('alpA ({}) start: {}'.format(alpA_prot_num, alpA_location_start))
+            print('alpA ({}) end: {}'.format(alpA_prot_num, alpA_location_end))
 
-            # set range for pri-rep to be found 
-            pici_low_limit = alpA_location_start - 25000
-            pici_high_limit = alpA_location_end + 25000
-  
+
+            ### New Code - Testing ###
+            # set range for pri-rep to be found from alpA
+            prirep_range_low = alpA_location_start - 25000
+            prirep_range_high = alpA_location_end + 25000
 
             # fix lower limit index to 0 if it is negative
-            if pici_low_limit < 0:
-              pici_low_limit = 0
-
+            if prirep_range_low < 0:
+              prirep_range_low = 0
 
             # fix upper limit index to the length of the sequence if it is over
-            if pici_high_limit >= len(record.seq):
-              pici_high_limit = len(record.seq)
+            if prirep_range_high >= len(record.seq):
+              prirep_range_high = len(record.seq)
 
-            range_to_be_discovered = range(pici_low_limit, pici_high_limit)
+            range_to_be_discovered = range(prirep_range_low, prirep_range_high)
 
             # check for pri-rep and if it is in the 50kb range
             for l in range(len(condensed_df)):
               if condensed_df.iloc[l,1].startswith('pri-rep'): # find prirep in df
                 prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[l,0])
                 prirep_range = range(prirep_location_start,prirep_location_end)
-                
+                prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
+
                 if range_subset(prirep_range, range_to_be_discovered) == True:
-                  print('Pri-rep start:', prirep_location_start)
-                  print('Pri-rep end:', prirep_location_end)
+                  #get PICI location using 25kb to the left and right of pri-rep
+                  pici_low_limit = prirep_location_start - 25000
+                  pici_high_limit = prirep_location_end + 25000
+                  # fix lower limit index to 0 if it is negative
+                  if pici_low_limit < 0:
+                    pici_low_limit = 0
+                  # fix upper limit index to the length of the sequence if it is over
+                  if pici_high_limit >= len(record.seq):
+                    pici_high_limit = len(record.seq)
+
+
+                  print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
+                  print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
                   print('PICI start:', pici_low_limit)
                   print('PICI end:', pici_high_limit)
                   print('\nPICI sequence:')
@@ -152,6 +167,7 @@ for i in range(len(condensed_df)):
                   seq_list.append(record.seq[pici_low_limit:pici_high_limit])
                   PICI_type.append("G_neg_PICI")
                   stop_loop = True
+
 
       #######################################################
       # SECOND search for co-localized sis... determines SaPI
@@ -167,44 +183,55 @@ for i in range(len(condensed_df)):
           # otherwise get the gene number for sis  
           elif condensed_df.iloc[k,1].startswith('sis'):
             sis_prot_num = int((condensed_df.iloc[k,0]).split('_')[-1])
+
             # check to see if it is within 4-12 genes away from the integrase  
-            if sis_prot_num in range(sis_low_lim_forward, sis_high_lim_forward) or range(sis_low_lim_backward, sis_high_lim_backward):
+            if sis_prot_num in range(sis_low_lim_forward, sis_high_lim_forward) or sis_prot_num in range(sis_high_lim_backward, sis_low_lim_backward):
 
               # Get protein locations in host
               # get the location of sis and see if pri-rep is within 25 kb to left or right (50kb total)
               int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
               sis_location_start, sis_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
               print('\nBeginning SaPI determination...')
-              print('Int start:', int_location_start)
-              print('Int end:',int_location_end)
-              print('Sis start:',sis_location_start)
-              print('Sis end:',sis_location_end)
+              print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
+              print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
+              print('Sis ({}) start: {}'.format(sis_prot_num, sis_location_start))
+              print('Sis ({}) end: {}'.format(sis_prot_num, sis_location_end))
 
-              # set range for pri-rep to be found 
-              pici_low_limit = sis_location_start - 25000
-              pici_high_limit = sis_location_end + 25000
-    
+
+              # set range for pri-rep to be found from sis
+              prirep_range_low = sis_location_start - 25000
+              prirep_range_high = sis_location_end + 25000
 
               # fix lower limit index to 0 if it is negative
-              if pici_low_limit < 0:
-                pici_low_limit = 0
-
+              if prirep_range_low < 0:
+                prirep_range_low = 0
 
               # fix upper limit index to the length of the sequence if it is over
-              if pici_high_limit >= len(record.seq):
-                pici_high_limit = len(record.seq)
+              if prirep_range_high >= len(record.seq):
+                prirep_range_high = len(record.seq)
 
-              range_to_be_discovered = range(pici_low_limit, pici_high_limit)
+              range_to_be_discovered = range(prirep_range_low, prirep_range_high)
 
               # check for pri-rep and if it is in the 50kb range
               for l in range(len(condensed_df)):
                 if condensed_df.iloc[l,1].startswith('pri-rep'): # find prirep in df
                   prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[l,0])
                   prirep_range = range(prirep_location_start,prirep_location_end)
-                  
+                  prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
+
                   if range_subset(prirep_range, range_to_be_discovered) == True:
-                    print('Pri-rep start:', prirep_location_start)
-                    print('Pri-rep end:', prirep_location_end)
+                    #get PICI location using 25kb to the left and right of pri-rep
+                    pici_low_limit = prirep_location_start - 25000
+                    pici_high_limit = prirep_location_end + 25000
+                    # fix lower limit index to 0 if it is negative
+                    if pici_low_limit < 0:
+                      pici_low_limit = 0
+                    # fix upper limit index to the length of the sequence if it is over
+                    if pici_high_limit >= len(record.seq):
+                      pici_high_limit = len(record.seq)
+
+                    print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
+                    print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
                     print('PICI start:', pici_low_limit)
                     print('PICI end:', pici_high_limit)
                     print('\nPICI sequence:')
@@ -215,8 +242,9 @@ for i in range(len(condensed_df)):
                     # add PICI to list
                     name_list.append(record.id)
                     seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                    PICI_type.append("SaPI")
+                    PICI_type.append("G_neg_PICI")
                     stop_loop = True
+
 
       ########################################################
       # THIRD search for co-localized pri-rep... determines G+
@@ -233,17 +261,17 @@ for i in range(len(condensed_df)):
           elif condensed_df.iloc[k,1].startswith('pri-rep'):
             prirep_prot_num = int((condensed_df.iloc[k,0]).split('_')[-1])
             # check to see if it is within 4-15 genes away from the integrase  
-            if prirep_prot_num in range(prirep_low_lim_forward, prirep_high_lim_forward) or range(prirep_low_lim_backward, prirep_high_lim_backward):
+            if prirep_prot_num in range(prirep_low_lim_forward, prirep_high_lim_forward) or prirep_prot_num in range(prirep_high_lim_backward, prirep_low_lim_backward):
 
               # Get protein locations in host
               # get the location of pri-rep and see if pri-rep is within 25 kb to left or right (50kb total)
               int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
               prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
               print('\nBeginning G+ PICI determination...')
-              print('Int start:', int_location_start)
-              print('Int end:',int_location_end)
-              print('Pri-rep start:',prirep_location_start)
-              print('Pri-rep end:',prirep_location_end)
+              print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
+              print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
+              print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
+              print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
 
               # set range for pri-rep to be found 
               pici_low_limit = prirep_location_start - 25000
@@ -270,7 +298,7 @@ for i in range(len(condensed_df)):
               name_list.append(record.id)
               seq_list.append(record.seq[pici_low_limit:pici_high_limit])
               PICI_type.append("G_pos_PICI")
-
+              stop_loop = True
 
                   
                   
@@ -285,6 +313,6 @@ for i in range(len(condensed_df)):
 PICI_file = open(file_name + "_PICI", "w")
 
 for m in range(len(seq_list)):
-  PICI_file.write(">" + str(name_list[m]) + " " + str(PICI_type[m]) + "_" + str(m) + "(" + file_name + ")" "\n" + str(seq_list[m]) + "\n")
+  PICI_file.write(">" + str(name_list[m]).split("||")[0] + " " + str(PICI_type[m]) + "_" + str(m) + "(" + file_name.split("||")[0] + ")" "\n" + str(seq_list[m]) + "\n")
 
 PICI_file.close()
