@@ -73,16 +73,16 @@ with open(fasta_file, mode='r') as handle:
             
             #set lower and upper bounds for alpA, sis, and pri-rep to be found (to the left and right of int)
             alpA_low_lim_forward = int_prot_num + 1
-            alpA_high_lim_forward = int_prot_num + 4
-            alpA_low_lim_backward = int_prot_num - 1
+            alpA_high_lim_forward = int_prot_num + 5 #compensating for range() function - highest number in range not considered 
+            alpA_low_lim_backward = int_prot_num - 0
             alpA_high_lim_backward = int_prot_num - 4
             sis_low_lim_forward = int_prot_num + 4
-            sis_high_lim_forward = int_prot_num + 12
-            sis_low_lim_backward = int_prot_num - 4
+            sis_high_lim_forward = int_prot_num + 13
+            sis_low_lim_backward = int_prot_num - 3
             sis_high_lim_backward = int_prot_num - 12
             prirep_low_lim_forward = int_prot_num + 4
-            prirep_high_lim_forward = int_prot_num + 15
-            prirep_low_lim_backward = int_prot_num - 4
+            prirep_high_lim_forward = int_prot_num + 16
+            prirep_low_lim_backward = int_prot_num - 3
             prirep_high_lim_backward = int_prot_num - 15
 
             # To stop current iteration if PICI is found (stop_loop = True)
@@ -103,8 +103,9 @@ with open(fasta_file, mode='r') as handle:
               elif condensed_df.iloc[k,0].startswith(record.id):  
                 if condensed_df.iloc[k,1].startswith('alpA'):
                   alpA_prot_num = int((condensed_df.iloc[k,0]).split('_')[-1])
+
                   # check to see if it is within 1-4 genes away from the integrase  
-                  if alpA_prot_num in range(alpA_low_lim_forward, alpA_high_lim_forward) or alpA_prot_num in range(alpA_high_lim_backward, alpA_low_lim_backward):
+                  if alpA_prot_num in range(alpA_high_lim_backward, alpA_low_lim_backward) or alpA_prot_num in range(alpA_low_lim_forward, alpA_high_lim_forward):
 
                     # Get protein locations in host
                     # get the location of alpA and see if pri-rep is within 25 kb to left or right (50kb total)
