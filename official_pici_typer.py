@@ -73,7 +73,7 @@ with open(fasta_file, mode='r') as handle:
             
             #set lower and upper bounds for alpA, sis, and pri-rep to be found (to the left and right of int)
             alpA_low_lim_forward = int_prot_num + 1
-            alpA_high_lim_forward = int_prot_num + 5 #compensating for range() function - highest number in range not considered 
+            alpA_high_lim_forward = int_prot_num + 5 #compensating for range() function - highest number in range() not considered... essentially adding 1 to high limits to get balanced range -/+ 
             alpA_low_lim_backward = int_prot_num - 0
             alpA_high_lim_backward = int_prot_num - 4
             sis_low_lim_forward = int_prot_num + 4
@@ -118,7 +118,6 @@ with open(fasta_file, mode='r') as handle:
                     print('alpA ({}) end: {}'.format(alpA_prot_num, alpA_location_end))
 
 
-                    ### New Code - Testing ###
                     # set range for pri-rep to be found from alpA
                     prirep_range_low = alpA_location_start - 25000
                     prirep_range_high = alpA_location_end + 25000
