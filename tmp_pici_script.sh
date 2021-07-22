@@ -11,6 +11,7 @@ do
 	# Temporary folder to create a copy of sequence named "all.fna" so that it may be fed into pici_integrase_trimmer_script.py
 	mkdir tmp
 	cp ./sequences/${f##*/} ./tmp
+	# ./tmp
 	cd tmp
 	mv ${f##*/} all.fna
 	echo '\033[0;35m'"Performing tBLASTn on ${f##*/}..."'\033[0m'
@@ -27,6 +28,7 @@ do
 		continue
 	else
 		mv trimmed_file ${f##*/}
+		# ./
 		cd ..
 		echo '\033[0;35m'"Running VirSorter2 on ${f##*/}..."'\033[0m'
 		mkdir ./PICIs/${f##*/}
