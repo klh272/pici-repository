@@ -7,6 +7,17 @@ Original file is located at
     https://colab.research.google.com/drive/1qYyKzGVdDNsEj-h6wrKEVhVOeWSJCdNB
 """
 
+# only run once
+import os
+from google.colab import drive
+
+drive.mount('/content/gdrive', force_remount=True)
+root_path = 'gdrive/My Drive/MSc_Thesis/multifasta_testing/GCF_900129655.fna-_files'  #change dir to your project folder
+os.chdir(root_path)
+os.getcwd()
+
+!pip3 install Biopython
+
 import os
 import pandas as pd
 from Bio import SeqIO
@@ -16,10 +27,23 @@ df = pd.read_csv('tBLASTn_results.out', sep='\t', header = None)
 # create dictionary for fasta file
 record_dict = SeqIO.to_dict(SeqIO.parse("all.fna", "fasta"))
 
+def range_subset(range1, range2):
+    """Whether range1 is a subset of range2. 
+    https://stackoverflow.com/questions/32480423/how-to-check-if-a-range-is-a-part-of-another-range-in-python-3-x
+    """
+    if not range1:
+        return True  # empty range is subset of anything
+    if not range2:
+        return False  # non-empty range can't be subset of empty range
+    if len(range1) > 1 and range1.step % range2.step:
+        return False  # must have a single value or integer multiple step
+    return range1.start in range2 and range1[-1] in range2
+
 # lists to hold headers and sequences for fasta output
 name_list = []
 seq_list = []
 description_list = []
+record_locations = []
 
 # search BLAST results for integrases
 for i in range(len(df)):
@@ -45,9 +69,17 @@ for i in range(len(df)):
           trim_high = len(record.seq)
             
         # Append trim to list
-        name_list.append(record_dict[df.iloc[i,1]].id)
-        seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
-        description_list.append(record_dict[df.iloc[i,1]].description)
+        if record_dict[df.iloc[i,1]].id in name_list:
+          idx = name_list.index(record_dict[df.iloc[i,1]].id)
+          print(idx)
+          if range_subset(range(trim_low,trim_high), record_locations[idx]) == True:
+            print("Overlapping integrase found; not written to file...")
+            continue
+        else:
+          name_list.append(record_dict[df.iloc[i,1]].id)
+          seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
+          description_list.append(record_dict[df.iloc[i,1]].description)
+          record_locations.append(range(trim_low,trim_high))
         print('Trim Finished.\n')
 
     else:
