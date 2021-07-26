@@ -243,7 +243,7 @@ with open(fasta_file, mode='r') as handle:
                               # add PICI to list
                               name_list.append(record.id)
                               seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                              PICI_type.append("G_neg_PICI")
+                              PICI_type.append("SaPI")
                               stop_loop = True
 
 
