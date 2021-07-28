@@ -45,7 +45,7 @@ do
                 # Run Blastp (*** add your path to BLAST_protein_db ***)
                 echo "Performing BLASTp on ${f##*/}..."
                 cd results/${f##*/}/iter-0
-                blastp -query ./all.pdg.faa -db /PATH/TO/BLAST_protein_db -task blastp -evalue 0.001 -outfmt 6 -out BLASTp_results.out
+                blastp -query ./all.pdg.faa -db /PATH/TO/PICI_BLAST_DB -task blastp -evalue 0.001 -outfmt 6 -out BLASTp_results.out
                 
                 # Set up for PICI typer
                 echo '\033[0;35m'"Running PICI-typer script on ${f##*/}..."'\033[0m'
