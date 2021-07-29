@@ -10,7 +10,7 @@ tar zxvpf ncbi-blast-2.12.0+-x64-linux.tar.gz <br>
 3) Download setup.sh script <br>
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/setup.sh <br>
 chmod +x setup.sh <br>
-<br>
+./setup.sh<br>
 <br>
 
 
