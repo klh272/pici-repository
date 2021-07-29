@@ -65,6 +65,9 @@ do
                 
                 # Run PICI typer script 
                 python3 ./../../../../../../scripts/updated_official_pici_typer.py
+		
+		# Remove duplicates
+		python3 ./../../../../../../scripts/duplicate_remover.py
                 
                 # Remove temporary files and move PICI results to PICI directory
                 rm all.fna all.pdg.faa BLASTp_results.out
