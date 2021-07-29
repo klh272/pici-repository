@@ -17,5 +17,6 @@ makeblastdb -in ./databases/BLAST_protein_db.faa -input_type fasta -dbtype prot 
 # download scripts
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/pici_integrase_trimmer_script.py -P ./scripts/
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/updated_official_pici_typer.py -P ./scripts/
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/duplicate_remover.py ./scripts/
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/updated_pici_script.sh -P ./scripts/
 chmod +x ./scripts/updated_pici_script.sh
