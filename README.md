@@ -1,18 +1,31 @@
-Download:
-  1) pici_scipt.sh: wrapper script that iterates protocol over every sequence in the directory "sequences". You may need to change the paths to fit your set up.
-  2) official_pici_typer.py: main algorithm to determine SaPI, G+ and G- PICIs. 
-  3) pici_integrase_trimmer_script.py: trims original sequences +/-35kb around >= 90% identity integrase matches. Reduces computational time and complexity in VirSorter2
-  4) BLAST_protein_db.faa: BLAST database of putative PICI-specific proteins (amino acids). This is necessary for tBLASTn and BLASTp procedures.
+Installation:
+
+1) Download and install VirSorter 2
+https://github.com/jiarong/VirSorter2/blob/master/README.md
+
+2) Download and install BLAST+ (if error occurs make sure it is the latest version from https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/)
+wget https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.12.0+-x64-linux.tar.gz 
+tar zxvpf ncbi-blast-2.12.0+-x64-linux.tar.gz
+
+3) Download setup.sh script
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/setup.sh
+chmod +x setup.sh
 
 
-IMPORTANT:
-Before doing anything create a child directory named "sequences". Here you will store your sequences of interest. The script should be ran in the parent directory 
-directly above "sequences". Make sure there are only fasta files in the "sequences" directory.
 
-NOTE: 
-At the moment there may be direct overlaps in PICIs for a given sequence... Currently working on removing complete duplicates in the output.
 
-The protocol will create two new folders in the parent directory (above child directory "sequences") called "results" and "PICIs". The "results" directory contains
-the output from VirSorter2, as well as the results from BLASTp. There isn't much of interest hear regarding PICIs unless the user wishes to explore them. The "PICIs" 
-directory holds the identified PICIs from the corresponding sequences. They are in fasta file format and contain information regarding what type of PICI they are in
-their header. 
+You now are all setup to run the PICI typer! Some errors may occur with dependencies not installed (often related to VirSorter2), so a test run is recommended. Simply install these dependencies with pip if this is the case.
+
+In your "data" directory you will create your projects (e.g., ./data/EXAMPLE_PROJECT_NAME/).
+These project directories are where you PICI, BLAST, and VirSorter2 results will be stored for that particular project.
+
+Within your project directory (EXAMPLE_PROJECT_NAME) create a sub-directory called "sequences" where you will store all your data relevant to that project (e.g., ./data/EXAMPLE_PROJECT_NAME/sequences/EXAMPLE_DATA_NAME.fasta)
+
+You will run the pici script ./../../scripts/updated_pici_script.sh from EXAMPLE_PROJECT_NAME.
+
+The output should create two additional directories: "PICIs" and "results"
+PICIs: Where identified PICIs are stored
+results: Where VirSorter2 and BLAST results are stored
+
+
+
