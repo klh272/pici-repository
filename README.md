@@ -23,7 +23,7 @@ These project directories are where you PICI, BLAST, and VirSorter2 results will
 <br>
 Within your project directory (EXAMPLE_PROJECT_NAME) create a sub-directory called "sequences" where you will store all your data relevant to that project (e.g., ./data/EXAMPLE_PROJECT_NAME/sequences/EXAMPLE_DATA_NAME.fasta) <br>
 <br>
-You will run the pici script ./../../scripts/updated_pici_script.sh from EXAMPLE_PROJECT_NAME. <br>
+You will run the pici script ./../../scripts/updated_pici_script.sh from your project directory (EXAMPLE_PROJECT_NAME). <br>
 <br>
 The output should create two additional directories: "PICIs" and "results" <br>
 PICIs: Where identified PICIs are stored <br>
