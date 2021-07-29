@@ -1,8 +1,8 @@
 Installation:
 
-1) Download and install VirSorter 2
-https://github.com/jiarong/VirSorter2/blob/master/README.md
-
+1) Download and install VirSorter 2 <br>
+https://github.com/jiarong/VirSorter2/blob/master/README.md <br>
+<br>
 2) Download and install BLAST+ (if error occurs make sure it is the latest version from https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/)
 wget https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.12.0+-x64-linux.tar.gz 
 tar zxvpf ncbi-blast-2.12.0+-x64-linux.tar.gz
