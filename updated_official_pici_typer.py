@@ -311,6 +311,6 @@ with open(fasta_file, mode='r') as handle:
 PICI_file = open("PICI_results", "w")
 
 for m in range(len(seq_list)):
-  PICI_file.write(">"  + str(desc_list[m]) +  " " + str(PICI_type[m]) + "_" + str(m) + "\n" + str(seq_list[m]) + "\n")
+  PICI_file.write(">"  + str(desc_list[m]) +  ";" + str(PICI_type[m]) + ";" + str(m) + "\n" + str(seq_list[m]) + "\n")
 
 PICI_file.close()

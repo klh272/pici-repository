@@ -70,6 +70,6 @@ print('Writing {} trims to output file \"trimmed_file\"'.format(len(seq_list)))
 trimmed_file = open("trimmed_file", "w")
 
 for m in range(len(seq_list)):
-  trimmed_file.write(">" + str(name_list[m]) + " " +str(description_list[m]) + ", integrase_" + str(m) + "\n" + str(seq_list[m]) + "\n")
+  trimmed_file.write(">" + str(description_list[m]) + ";integrase_" + str(m) + "\n" + str(seq_list[m]) + "\n")
 
 trimmed_file.close()
