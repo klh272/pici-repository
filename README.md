@@ -18,6 +18,8 @@ chmod +x setup.sh <br>
 
 You now are all setup to run the PICI typer! Some errors may occur with dependencies not installed (often related to VirSorter2), so a test run is recommended. Simply install these dependencies with pip if this is the case.<br>
 <br>
+Make sure VirSorter2 is activated.<br>
+<br>
 In your "data" directory you will create your projects (e.g., ./data/EXAMPLE_PROJECT_NAME/). <br>
 These project directories are where you PICI, BLAST, and VirSorter2 results will be stored for that particular project. <br>
 <br>
