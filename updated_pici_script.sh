@@ -59,7 +59,7 @@ do
         	        blastp -query ./all.pdg.faa -db ./../../../../../databases/PICI_BLAST_DB -task blastp -evalue 0.001 -outfmt 6 -out BLASTp_results.out
         	        
         	        # Set up for PICI typer
-        	        echo '\033[0;35m'"Running PICI-typer script on ${f##*/}..."'\033[0m'
+        	        echo "Running PICI-typer script on ${f##*/}..."
         	        mkdir python
 			cp ${f##*/} ./python # Preserves host info
         	        cp all.pdg.faa ./python
@@ -77,7 +77,9 @@ do
         	        # Move PICI results to PICI directory
         	        mv ./PICI_results ./../../../../PICIs/${f##*/}
         	        cd ../../../../
-        	        echo '\033[0;35m'"Finished ${f##*/}..."'\033[0m'
+        	        echo "Finished ${f##*/}..."
         	fi
 	fi
 done
+
+
