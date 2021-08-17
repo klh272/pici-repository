@@ -82,4 +82,5 @@ do
 	fi
 done
 
-
+echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
+./../../scripts/pici_collector.sh
