@@ -241,9 +241,9 @@ with open(fasta_file, mode='r') as handle:
                               stop_loop = True
 
 
-            ########################################################
-            # THIRD search for co-localized pri-rep... determines G+
-            ######################################################## 
+            #####################################################################
+            # THIRD search for co-localized pri-rep... determines phage satellite
+            ##################################################################### 
             if stop_loop == False:
               for k in range(i-15,i+15):
                 # if the index is negative set it to 0
@@ -263,7 +263,7 @@ with open(fasta_file, mode='r') as handle:
                       # get the location of pri-rep and see if pri-rep is within 25 kb to left or right (50kb total)
                       int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
                       prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
-                      print('\nBeginning G+ PICI determination...')
+                      print('\nBeginning phage satellite determination...')
                       print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
                       print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
                       print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
@@ -293,7 +293,7 @@ with open(fasta_file, mode='r') as handle:
                       # add PICI to list
                       name_list.append(record.id)
                       seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                      PICI_type.append("G_pos_PICI")
+                      PICI_type.append("phage_satellite")
                       desc_list.append(record.description)
                       stop_loop = True
 
