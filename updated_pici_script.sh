@@ -84,3 +84,9 @@ done
 
 echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
 ./../../scripts/pici_collector.sh
+
+echo "Separating PICI type and phage satellites..."
+python3 ./../../scripts/pici_separator.py
+
+echo "Collecting host genomes..."
+./../../scripts/genome_collector.sh
