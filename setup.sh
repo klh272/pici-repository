@@ -20,5 +20,8 @@ wget https://raw.githubusercontent.com/klh272/pici-repository/main/updated_offic
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/duplicate_remover.py -P ./scripts/
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/updated_pici_script.sh -P ./scripts/
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/pici_collector.sh -P ./scripts/
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/pici_separator.py -P ./scripts/
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/genome_collector.sh -P ./scripts/
 chmod +x ./scripts/updated_pici_script.sh
 chmod +x ./scripts/pici_collector.sh
+chmod +x ./scripts/genome_collector.sh
