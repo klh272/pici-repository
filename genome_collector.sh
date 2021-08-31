@@ -24,7 +24,7 @@ tr "\t" "\n" < tmp_ALL_PICIs_host_genomes.fasta > ALL_PICIs_host_genomes.fasta
 
 rm tmp_ALL_PICIs_host_genomes.fasta
 
-echo "Host genome retro-extraction completed. Check ALL_PICIs_host_names.txt and ALL_PICIs_host_genomes.fasta for results."
+echo "Host genome retro-extraction completed. Check $(basename "$PWD")_ALL_PICIs_host_names.txt and $(basename "$PWD")_ALL_PICIs_host_genomes.fasta for results."
 
 
 if test -f "G_neg_PICIs.fasta"; then
@@ -40,7 +40,11 @@ if test -f "G_neg_PICIs.fasta"; then
 
         rm tmp_G_neg_PICIs_host_genomes.fasta
 
-        echo "Host genome retro-extraction completed. Check G_neg_PICIs_host_names.txt and G_neg_PICIs_host_genomes.fasta for results."
+        mv G_neg_PICIs.fasta $(basename "$PWD")_G_neg_PICIs.fasta
+        mv G_neg_PICIs_host_names.txt $(basename "$PWD")_G_neg_PICIs_host_names.txt
+        mv G_neg_PICIs_host_genomes.fasta $(basename "$PWD")_G_neg_PICIs_host_genomes.fasta
+
+        echo "Host genome retro-extraction completed. Check $(basename "$PWD")_G_neg_PICIs_host_names.txt and $(basename "$PWD")_G_neg_PICIs_host_genomes.fasta for results."
 else
         echo "No G_neg_PICIs.fasta detected."
 fi
@@ -60,7 +64,11 @@ if test -f "SaPIs.fasta"; then
 
         rm tmp_SaPIs_host_genomes.fasta
 
-        echo "Host genome retro-extraction completed. Check SaPIs_host_names.txt and SaPIs_host_genomes.fasta for results."
+        mv SaPIs.fasta $(basename "$PWD")_SaPIs.fasta
+        mv SaPIs_host_names.txt $(basename "$PWD")_SaPIs_host_names.txt
+        mv SaPIs_host_genomes.fasta $(basename "$PWD")_SaPIs_host_genomes.fasta
+
+        echo "Host genome retro-extraction completed. Check $(basename "$PWD")_SaPIs_host_names.txt and $(basename "$PWD")_SaPIs_host_genomes.fasta for results."
 else
         echo "No SaPIs.fasta detected."
 fi
@@ -80,11 +88,25 @@ if test -f "Phage_Satellites.fasta"; then
 
         rm tmp_Phage_Satellites_host_genomes.fasta
 
-        echo "Host genome retro-extraction completed. Check Phage_Satellites_host_names.txt and Phage_Satellites_host_genomes.fasta for results."
+        mv Phage_Satellites.fasta $(basename "$PWD")_Phage_Satellites.fasta
+        mv Phage_Satellites_host_names.txt $(basename "$PWD")_Phage_Satellites_host_names.txt
+        mv Phage_Satellites_host_genomes.fasta $(basename "$PWD")_Phage_Satellites_host_genomes.fasta
+
+        echo "Host genome retro-extraction completed. Check $(basename "$PWD")_Phage_Satellites_host_names.txt and $(basename "$PWD")_Phage_Satellites_host_genomes.fasta for results."
 else
         echo "No Phage_Satellites.fasta detected."
 fi
 
 rm linear.fasta
 rm Host_genomes.fasta
+
+
+mv ALL_PICIs.fasta $(basename "$PWD")_ALL_PICIs.fasta
+mv ALL_PICIs_host_names.txt $(basename "$PWD")_ALL_PICIs_host_names.txt
+mv ALL_PICIs_host_genomes.fasta $(basename "$PWD")_ALL_PICIs_host_genomes.fasta
+
+
+
+
+
 
