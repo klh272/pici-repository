@@ -52,6 +52,8 @@ name_list = []
 seq_list = []
 PICI_type = []
 desc_list = []
+#final_start = []
+#final_end = []
 
 fasta_file = 'all.fna'
 with open(fasta_file, mode='r') as handle:
@@ -150,38 +152,39 @@ with open(fasta_file, mode='r') as handle:
                             prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
 
                             if range_subset(prirep_range, range_to_be_discovered) == True:
-                              #get PICI location using -2kb and +25kb from int
-                              pici_low_limit = int_location_start - 2000
-                              pici_high_limit = int_location_end + 25000
-                              # fix lower limit index to 0 if it is negative
-                              if pici_low_limit < 0:
-                                pici_low_limit = 0
-                              # fix upper limit index to the length of the sequence if it is over
-                              if pici_high_limit >= len(record.seq):
-                                pici_high_limit = len(record.seq)
+                              if range_subset(range(alpA_location_start, alpA_location_end), range(int_location_end, prirep_location_start)) == True:
+                                #get PICI location using -2kb and +25kb from int
+                                pici_low_limit = int_location_start - 2000
+                                pici_high_limit = int_location_end + 25000
+                                # fix lower limit index to 0 if it is negative
+                                if pici_low_limit < 0:
+                                  pici_low_limit = 0
+                                # fix upper limit index to the length of the sequence if it is over
+                                if pici_high_limit >= len(record.seq):
+                                  pici_high_limit = len(record.seq)
 
 
-                              print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
-                              print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
-                              print('PICI start:', pici_low_limit)
-                              print('PICI end:', pici_high_limit)
-                              print('\nPICI sequence:')
-                              print(record.seq[pici_low_limit:pici_high_limit])
-                              print('\nPICI length:', len(record.seq[pici_low_limit:pici_high_limit]))
-                              print('\n')
+                                print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
+                                print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
+                                print('PICI start:', pici_low_limit)
+                                print('PICI end:', pici_high_limit)
+                                print('\nPICI sequence:')
+                                print(record.seq[pici_low_limit:pici_high_limit])
+                                print('\nPICI length:', len(record.seq[pici_low_limit:pici_high_limit]))
+                                print('\n')
 
-                              # add PICI to list
-                              name_list.append(record.id)
-                              seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                              PICI_type.append("G_neg_PICI")
-                              desc_list.append(record.description)
-                              stop_loop = True
+                                # add PICI to list
+                                name_list.append(record.id)
+                                seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                                PICI_type.append("G_neg_PICI")
+                                desc_list.append(record.description)
+                                stop_loop = True
 
 
                     # If the backward direction is true for PICI structure
                     elif backward_direction == True:
                       # Looking for pri-rep in the direction alpA is (backward)
-                      range_to_be_discovered = range(int_location_start, prirep_range_low)
+                      range_to_be_discovered = range(prirep_range_low, int_location_start)
 
                       # check for pri-rep and if it is in the 50kb range
                       for l in range(len(condensed_df)):
@@ -192,32 +195,33 @@ with open(fasta_file, mode='r') as handle:
                             prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
 
                             if range_subset(prirep_range, range_to_be_discovered) == True:
-                              #get PICI location using -25kb and +2kb from int
-                              pici_low_limit = int_location_start - 25000
-                              pici_high_limit = int_location_end + 2000
-                              # fix lower limit index to 0 if it is negative
-                              if pici_low_limit < 0:
-                                pici_low_limit = 0
-                              # fix upper limit index to the length of the sequence if it is over
-                              if pici_high_limit >= len(record.seq):
-                                pici_high_limit = len(record.seq)
+                              if range_subset(range(alpA_location_start, alpA_location_end), range(prirep_location_end, int_location_start)) == True:
+                                #get PICI location using -25kb and +2kb from int
+                                pici_low_limit = int_location_start - 25000
+                                pici_high_limit = int_location_end + 2000
+                                # fix lower limit index to 0 if it is negative
+                                if pici_low_limit < 0:
+                                  pici_low_limit = 0
+                                # fix upper limit index to the length of the sequence if it is over
+                                if pici_high_limit >= len(record.seq):
+                                  pici_high_limit = len(record.seq)
 
 
-                              print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
-                              print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
-                              print('PICI start:', pici_low_limit)
-                              print('PICI end:', pici_high_limit)
-                              print('\nPICI sequence:')
-                              print(record.seq[pici_low_limit:pici_high_limit])
-                              print('\nPICI length:', len(record.seq[pici_low_limit:pici_high_limit]))
-                              print('\n')
+                                print('Pri-rep ({}) start: {}'.format(prirep_prot_num, prirep_location_start))
+                                print('Pri-rep ({}) end: {}'.format(prirep_prot_num, prirep_location_end))
+                                print('PICI start:', pici_low_limit)
+                                print('PICI end:', pici_high_limit)
+                                print('\nPICI sequence:')
+                                print(record.seq[pici_low_limit:pici_high_limit])
+                                print('\nPICI length:', len(record.seq[pici_low_limit:pici_high_limit]))
+                                print('\n')
 
-                              # add PICI to list
-                              name_list.append(record.id)
-                              seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                              PICI_type.append("G_neg_PICI")
-                              desc_list.append(record.description)
-                              stop_loop = True
+                                # add PICI to list
+                                name_list.append(record.id)
+                                seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                                PICI_type.append("G_neg_PICI")
+                                desc_list.append(record.description)
+                                stop_loop = True
 
 
 
@@ -323,8 +327,9 @@ with open(fasta_file, mode='r') as handle:
 
                       # If the backward direction is true for PICI structure
                       elif backward_direction == True:
+
                         # Looking for pri-rep in the direction sis is (backward)
-                        range_to_be_discovered = range(int_location_start, prirep_range_low)
+                        range_to_be_discovered = range(prirep_range_low, int_location_start)
 
                         # check for pri-rep and if it is in the 50kb range
                         for l in range(len(condensed_df)):
@@ -336,7 +341,8 @@ with open(fasta_file, mode='r') as handle:
 
                               # Make sure structure is correct
                               if range_subset(prirep_range, range_to_be_discovered) == True:
-                                if range_subset(range(sis_location_start, sis_location_end), range(int_location_start, prirep_location_end)) == True:
+                                print("Range is a subset")
+                                if range_subset(range(sis_location_start, sis_location_end), range(prirep_location_end, int_location_start)) == True:
                                   #get PICI location using -25kb and +2kb from int
                                   pici_low_limit = int_location_start - 25000
                                   pici_high_limit = int_location_end + 2000

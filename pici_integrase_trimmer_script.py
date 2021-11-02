@@ -24,6 +24,8 @@ name_list = []
 seq_list = []
 description_list = []
 record_locations = []
+#trim_start = []
+#trim_end = []
 
 # search BLAST results for integrases
 for i in range(len(df)):
@@ -59,6 +61,8 @@ for i in range(len(df)):
           seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
           description_list.append(record_dict[df.iloc[i,1]].description)
           record_locations.append(range(trim_low,trim_high))
+          #trim_start.append(trim_low)
+          #trim_end.append(trim_high)
         print('Trim Finished.\n')
 
     else:
