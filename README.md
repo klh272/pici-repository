@@ -26,8 +26,11 @@ Within your project directory (EXAMPLE_PROJECT_NAME) create a sub-directory call
 You will run the pici script ./../../scripts/updated_pici_script.sh from your project directory (EXAMPLE_PROJECT_NAME). <br>
 <br>
 The output should create two additional directories: "PICIs" and "results" <br>
-PICIs: Where identified PICIs are stored <br>
+PICIs: Where pre-reviewed PICIs are stored <br>
 results: Where Prodigal and BLAST results are stored <br>
+<br>
+<br>
+In your project directory will be the final results, with the project's name as the prefix to the files.
 
 
 
