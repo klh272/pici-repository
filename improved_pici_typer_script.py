@@ -52,8 +52,8 @@ name_list = []
 seq_list = []
 PICI_type = []
 desc_list = []
-#final_start = []
-#final_end = []
+final_start = []
+final_end = []
 
 fasta_file = 'all.fna'
 with open(fasta_file, mode='r') as handle:
@@ -174,11 +174,24 @@ with open(fasta_file, mode='r') as handle:
                                 print('\n')
 
                                 # add PICI to list
-                                name_list.append(record.id)
-                                seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                                PICI_type.append("G_neg_PICI")
-                                desc_list.append(record.description)
-                                stop_loop = True
+                                trim_start = int(record.description.split(';')[2])
+                                trim_end = int(record.description.split(';')[3])
+                                trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                if pici_high_limit-1 > len(trim_list):
+                                  continue
+                                else:
+                                  name_list.append(record.id)
+                                  seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                                  PICI_type.append("G_neg_PICI")
+                                  trim_start = int(record.description.split(';')[2])
+                                  trim_end = int(record.description.split(';')[3])
+                                  trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                  final_start = trim_list[pici_low_limit]
+                                  final_end = trim_list[pici_high_limit-1]
+                                  record.description = record.description.replace(str(trim_start), str(final_start))
+                                  record.description = record.description.replace(str(trim_end), str(final_end))
+                                  desc_list.append(record.description)
+                                  stop_loop = True
 
 
                     # If the backward direction is true for PICI structure
@@ -217,11 +230,24 @@ with open(fasta_file, mode='r') as handle:
                                 print('\n')
 
                                 # add PICI to list
-                                name_list.append(record.id)
-                                seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                                PICI_type.append("G_neg_PICI")
-                                desc_list.append(record.description)
-                                stop_loop = True
+                                trim_start = int(record.description.split(';')[2])
+                                trim_end = int(record.description.split(';')[3])
+                                trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                if pici_high_limit-1 > len(trim_list):
+                                  continue
+                                else:
+                                  name_list.append(record.id)
+                                  seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                                  PICI_type.append("G_neg_PICI")
+                                  trim_start = int(record.description.split(';')[2])
+                                  trim_end = int(record.description.split(';')[3])
+                                  trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                  final_start = trim_list[pici_low_limit]
+                                  final_end = trim_list[pici_high_limit-1]
+                                  record.description = record.description.replace(str(trim_start), str(final_start))
+                                  record.description = record.description.replace(str(trim_end), str(final_end))
+                                  desc_list.append(record.description)
+                                  stop_loop = True
 
 
 
@@ -318,11 +344,24 @@ with open(fasta_file, mode='r') as handle:
                                   print('\n')
 
                                   # add PICI to list
-                                  name_list.append(record.id)
-                                  seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                                  PICI_type.append("SaPI")
-                                  desc_list.append(record.description)
-                                  stop_loop = True
+                                  trim_start = int(record.description.split(';')[2])
+                                  trim_end = int(record.description.split(';')[3])
+                                  trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                  if pici_high_limit-1 > len(trim_list):
+                                    continue
+                                  else:
+                                    name_list.append(record.id)
+                                    seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                                    PICI_type.append("SaPI")
+                                    trim_start = int(record.description.split(';')[2])
+                                    trim_end = int(record.description.split(';')[3])
+                                    trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                    final_start = trim_list[pici_low_limit]
+                                    final_end = trim_list[pici_high_limit-1]
+                                    record.description = record.description.replace(str(trim_start), str(final_start))
+                                    record.description = record.description.replace(str(trim_end), str(final_end))
+                                    desc_list.append(record.description)
+                                    stop_loop = True
 
 
                       # If the backward direction is true for PICI structure
@@ -364,11 +403,24 @@ with open(fasta_file, mode='r') as handle:
                                   print('\n')
 
                                   # add PICI to list
-                                  name_list.append(record.id)
-                                  seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                                  PICI_type.append("SaPI")
-                                  desc_list.append(record.description)
-                                  stop_loop = True
+                                  trim_start = int(record.description.split(';')[2])
+                                  trim_end = int(record.description.split(';')[3])
+                                  trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                  if pici_high_limit-1 > len(trim_list):
+                                    continue
+                                  else:
+                                    name_list.append(record.id)
+                                    seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                                    PICI_type.append("SaPI")
+                                    trim_start = int(record.description.split(';')[2])
+                                    trim_end = int(record.description.split(';')[3])
+                                    trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                    final_start = trim_list[pici_low_limit]
+                                    final_end = trim_list[pici_high_limit-1]
+                                    record.description = record.description.replace(str(trim_start), str(final_start))
+                                    record.description = record.description.replace(str(trim_end), str(final_end))
+                                    desc_list.append(record.description)
+                                    stop_loop = True
 
 
 
@@ -430,11 +482,24 @@ with open(fasta_file, mode='r') as handle:
                         print('\n')
 
                         # add PICI to list
-                        name_list.append(record.id)
-                        seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                        PICI_type.append("phage_satellite")
-                        desc_list.append(record.description)
-                        stop_loop = True
+                        trim_start = int(record.description.split(';')[2])
+                        trim_end = int(record.description.split(';')[3])
+                        trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                        if pici_high_limit-1 > len(trim_list):
+                          continue
+                        else:
+                          name_list.append(record.id)
+                          seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                          PICI_type.append("phage_satellite")
+                          trim_start = int(record.description.split(';')[2])
+                          trim_end = int(record.description.split(';')[3])
+                          trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                          final_start = trim_list[pici_low_limit]
+                          final_end = trim_list[pici_high_limit-1]
+                          record.description = record.description.replace(str(trim_start), str(final_start))
+                          record.description = record.description.replace(str(trim_end), str(final_end))
+                          desc_list.append(record.description)
+                          stop_loop = True
 
                       # If the backward direction is true for phage satellite structure
                       elif backward_direction == True:
@@ -458,11 +523,24 @@ with open(fasta_file, mode='r') as handle:
                         print('\n')
 
                         # add PICI to list
-                        name_list.append(record.id)
-                        seq_list.append(record.seq[pici_low_limit:pici_high_limit])
-                        PICI_type.append("phage_satellite")
-                        desc_list.append(record.description)
-                        stop_loop = True
+                        trim_start = int(record.description.split(';')[2])
+                        trim_end = int(record.description.split(';')[3])
+                        trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                        if pici_high_limit-1 > len(trim_list):
+                          continue
+                        else:
+                          name_list.append(record.id)
+                          seq_list.append(record.seq[pici_low_limit:pici_high_limit])
+                          PICI_type.append("phage_satellite")
+                          trim_start = int(record.description.split(';')[2])
+                          trim_end = int(record.description.split(';')[3])
+                          trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                          final_start = trim_list[pici_low_limit]
+                          final_end = trim_list[pici_high_limit-1]
+                          record.description = record.description.replace(str(trim_start), str(final_start))
+                          record.description = record.description.replace(str(trim_end), str(final_end))
+                          desc_list.append(record.description)
+                          stop_loop = True
 
 
 
@@ -494,6 +572,7 @@ with open(fasta_file, mode='r') as handle:
 PICI_file = open("PICI_results", "w")
 
 for m in range(len(seq_list)):
-  PICI_file.write(">"  + str(desc_list[m]) +  ";" + str(PICI_type[m]) + ";" + str(m) + "\n" + str(seq_list[m]) + "\n")
-
+  PICI_file.write(">"  + str(desc_list[m].replace(name_list[m], name_list[m].split("*")[0])) +  ";" + str(PICI_type[m]) + ";" + str(m) + "\n" + str(seq_list[m]) + "\n")
+#desc_list[m].replace(name_list[m], name_list[m].split("_")[0]
+#str(desc_list[m])
 PICI_file.close()

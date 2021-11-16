@@ -24,8 +24,9 @@ name_list = []
 seq_list = []
 description_list = []
 record_locations = []
-#trim_start = []
-#trim_end = []
+trim_start = []
+trim_end = []
+int_id = []
 
 # search BLAST results for integrases
 for i in range(len(df)):
@@ -54,15 +55,27 @@ for i in range(len(df)):
         if record_dict[df.iloc[i,1]].id in name_list:
           idx = name_list.index(record_dict[df.iloc[i,1]].id)
           print(idx)
+          print(range(trim_low,trim_high))
+          print(record_locations[idx])
           if range_subset(range(trim_low,trim_high), record_locations[idx]) == True:
+            print("Is subset.")
             continue
+          else:
+            name_list.append(record_dict[df.iloc[i,1]].id)
+            seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
+            description_list.append(record_dict[df.iloc[i,1]].description)
+            record_locations.append(range(trim_low,trim_high))
+            trim_start.append(trim_low)
+            trim_end.append(trim_high)
+            int_id.append(df.iloc[i,0])
         else:
           name_list.append(record_dict[df.iloc[i,1]].id)
           seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
           description_list.append(record_dict[df.iloc[i,1]].description)
           record_locations.append(range(trim_low,trim_high))
-          #trim_start.append(trim_low)
-          #trim_end.append(trim_high)
+          trim_start.append(trim_low)
+          trim_end.append(trim_high)
+          int_id.append(df.iloc[i,0])
         print('Trim Finished.\n')
 
     else:
@@ -74,6 +87,6 @@ print('Writing {} trims to output file \"trimmed_file\"'.format(len(seq_list)))
 trimmed_file = open("trimmed_file", "w")
 
 for m in range(len(seq_list)):
-  trimmed_file.write(">" + str(description_list[m]) + ";integrase_" + str(m) + "\n" + str(seq_list[m]) + "\n")
-
+  trimmed_file.write(">" + str(description_list[m].replace(name_list[m], name_list[m] + "*" + str(m))) + ";" + str(int_id[m]) + ";" + str(trim_start[m]) + ";" + str(trim_end[m]) +  "\n" + str(seq_list[m]) + "\n")
+  print(">" + str(description_list[m].replace(name_list[m], name_list[m] + "*" + str(m))) + ";" + str(int_id[m]) + ";" + str(trim_start[m]) + ";" + str(trim_end[m]))
 trimmed_file.close()
