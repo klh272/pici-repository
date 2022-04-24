@@ -1,13 +1,13 @@
 Installation:
 
-1) Download and install Prodigal <br>
+1. Download and install Prodigal <br>
 https://github.com/hyattpd/prodigal/wiki/Introduction <br>
 <br>
-2) Download and install BLAST+ (if error occurs make sure it is the latest version from https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/)<br>
+2. Download and install BLAST+ (if error occurs make sure it is the latest version from https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/)<br>
 wget https://ftp.ncbi.nlm.nih.gov/blast/executables/LATEST/ncbi-blast-2.12.0+-x64-linux.tar.gz <br>
 tar zxvpf ncbi-blast-2.12.0+-x64-linux.tar.gz <br>
 <br>
-3) Download setup.sh script <br>
+3. Download setup.sh script <br>
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/setup.sh <br>
 chmod +x setup.sh <br>
 ./setup.sh<br>
