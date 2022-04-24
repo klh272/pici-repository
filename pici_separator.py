@@ -4,7 +4,7 @@ import pandas as pd
 #!pip3 install Biopython
 from Bio import SeqIO
 
-handle = open("ALL_PICIs.fasta", "rU")
+handle = open("ALL_PICIs.fasta", "r")
 record_dict = SeqIO.to_dict(SeqIO.parse(handle, "fasta"), key_function = lambda rec : rec.description.replace(" ", "__"))
 handle.close()
 

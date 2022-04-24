@@ -81,7 +81,7 @@ do
         	        
         	        
         	        # Run PICI typer script 
-        	        python3 ./../../../../../scripts/improved_pici_typer_script.py
+        	        python3 ./../../../../../scripts/prototype_typer.py
 			
 			# Remove duplicates
 			python3 ./../../../../../scripts/duplicate_remover.py
@@ -114,3 +114,8 @@ rm G_neg_PICI_reviewed
 
 echo "Collecting host genomes..."
 ./../../scripts/genome_collector.sh
+
+echo "Creating table..."
+cat $(basename "$PWD")_ALL_PICIs.fasta | grep -e "^>" | sed 's/>//g' | sed 's/;/\t/g' > $(basename "$PWD")_PICI_table.tsv
+
+echo "Done."

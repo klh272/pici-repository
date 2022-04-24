@@ -34,11 +34,20 @@ with open(fasta_file, mode='r') as handle:
     for i in range(len(condensed_df)):
       if condensed_df.iloc[i,0].startswith(record.id): # ensures same sequence in multi-sequence fasta file is being used
         if condensed_df.iloc[i,1].startswith('alpA'): # find alpA'ss in df
-
+          if condensed_df.iloc[i,2] >= 50:
             # add PICI to list
             neg_name_list.append(record.id)
             neg_seq_list.append(record.seq)
-            neg_desc_list.append(record.description)
+            # format alpA info
+            my_desc = str(record.description)
+            my_desc = my_desc.split(';')
+            my_desc[10] = str(condensed_df.iloc[i,1])
+            my_desc[11] = str(condensed_df.iloc[i,2])
+            my_desc[12] = str(condensed_df.iloc[i,8])
+            my_desc[13] = str(condensed_df.iloc[i,9])
+            my_desc = ';'.join(my_desc)
+            #record.description = record.description.replace(str(trim_start), str(final_seq_start))
+            neg_desc_list.append(my_desc)
             break
         else:
           continue

@@ -27,16 +27,14 @@ record_locations = []
 trim_start = []
 trim_end = []
 int_id = []
+identity_list = []
 
 # search BLAST results for integrases
 for i in range(len(df)):
     if df.iloc[i,0].startswith('int'): # find integrases in df
-      if df.iloc[i,2] >= 70: # check it integrase identity is above 90%
+      if df.iloc[i,2] >= 70: # check it integrase identity is above 70%
         print('\nIntegrase found with identity >= 70% in', record_dict[df.iloc[i,1]].description)
-        print('Location: {} {}'.format(df.iloc[i,8], df.iloc[i,9]))
         print('BLAST database ID: ', df.iloc[i,0])
-        print("Identity %%: ", df.iloc[i,2])
-        print('Beginning trim...')
 
         # get integrase start/end
         int_start = df.iloc[i,8]
@@ -44,36 +42,24 @@ for i in range(len(df)):
 
         trim_low = int_start - 30000
         trim_high = int_end + 30000
-
+            
         # fix lower limit index to 0 if it is negative
         if trim_low < 0:
           trim_low = 0
         # fix upper limit index to the length of the sequence if it is over
         if trim_high >= len(record_dict[df.iloc[i,1]].seq):
-          trim_high = len(record_dict[df.iloc[i,1]].seq)
-
+          trim_high = len(record.seq)
+            
         # Append trim to list
         if record_dict[df.iloc[i,1]].id in name_list:
-
-          no_overlap = True
-          tmp_int_indices = []
-          for z in range(len(name_list)):
-            if name_list[z] == record_dict[df.iloc[i,1]].id:
-              tmp_int_indices.append(z)
-
-          print("Existing int indices", tmp_int_indices)
-          print("Checking for overlap.")
-
-          x = 0
-          while x < len(tmp_int_indices):
-            for y in range(len(tmp_int_indices)):
-              x += 1
-              if range_subset(range(trim_low,trim_high), record_locations[tmp_int_indices[y]]) == True:
-                print("Is subset.")
-                no_overlap = False
-                continue
-
-          if no_overlap == True:
+          idx = name_list.index(record_dict[df.iloc[i,1]].id)
+          print(idx)
+          print(range(trim_low,trim_high))
+          print(record_locations[idx])
+          if range_subset(range(trim_low,trim_high), record_locations[idx]) == True:
+            print("Is subset.")
+            continue
+          else:
             name_list.append(record_dict[df.iloc[i,1]].id)
             seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
             description_list.append(record_dict[df.iloc[i,1]].description)
@@ -81,8 +67,7 @@ for i in range(len(df)):
             trim_start.append(trim_low)
             trim_end.append(trim_high)
             int_id.append(df.iloc[i,0])
-            print("Is not a subset. Adding to output.")
-
+            identity_list.append(df.iloc[i,2])
         else:
           name_list.append(record_dict[df.iloc[i,1]].id)
           seq_list.append(record_dict[df.iloc[i,1]].seq[trim_low:trim_high])
@@ -91,17 +76,21 @@ for i in range(len(df)):
           trim_start.append(trim_low)
           trim_end.append(trim_high)
           int_id.append(df.iloc[i,0])
-        print('Trim Finished.\n')
+          identity_list.append(df.iloc[i,2])
+        print('Integrase Search Finished.\n')
 
     else:
       print('No hit')
 
 
 # write trimmed sequence(s) to file
-print('Writing {} trims to output file \"trimmed_file\"'.format(len(seq_list)))
-trimmed_file = open("trimmed_file", "w")
+host_file = open("list_of_potential_hosts", "a")
+
+
 
 for m in range(len(seq_list)):
-  trimmed_file.write(">" + str(description_list[m].replace(name_list[m], name_list[m] + "*" + str(m))) + ";" + str(int_id[m]) + ";" + str(trim_start[m]) + ";" + str(trim_end[m]) +  "\n" + str(seq_list[m]) + "\n")
-  print(">" + str(description_list[m].replace(name_list[m], name_list[m] + "*" + str(m))) + ";" + str(int_id[m]) + ";" + str(trim_start[m]) + ";" + str(trim_end[m]))
-trimmed_file.close()
+  host_file.write("\n" + str(description_list[m]) + ";" + str(int_id[m]) + ";" + str(identity_list[m]))
+  print("Writing" + "\n" + str(description_list[m]) + ";" + str(int_id[m]) + ";" + str(identity_list[m]) + " to potential host list...")
+host_file.close()
+
+
