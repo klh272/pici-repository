@@ -31,12 +31,9 @@ results: Where Prodigal and BLAST results are stored <br>
 <br>
 <br>
 In your project directory will be the final results, with the project's name as the prefix to the files.
-
-
 <br>
 <br>
-<br>
-Table Output:<br>
+Table Output (explanation of columns):<br>
 1. <b>sequenceID</b>: The record's name and description<br>
 2. <b>type</b>: G_neg_PICI, SaPI, phage_satellite<br>
 3. <b>length</b>: PICI length in bp<br>
