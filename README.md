@@ -1,4 +1,4 @@
-Installation:
+# Installation: 
 
 1. Download and install Prodigal <br>
 https://github.com/hyattpd/prodigal/wiki/Introduction <br>
@@ -14,7 +14,7 @@ chmod +x setup.sh <br>
 <br>
 
 
-
+# Running PICI typer
 
 You now are all setup to run the PICI typer! Some errors may occur with dependencies not installed, so a test run is recommended. Simply install these dependencies with pip if this is the case.<br>
 <br>
@@ -33,7 +33,7 @@ results: Where Prodigal and BLAST results are stored <br>
 In your project directory will be the final results, with the project's name as the prefix to the files.
 <br>
 <br>
-Table Output (explanation of columns):<br>
+# Table Output (explanation of columns):<br>
 1. <b>sequenceID</b>: The record's name and description<br>
 2. <b>type</b>: G_neg_PICI, SaPI, phage_satellite<br>
 3. <b>length</b>: PICI length in bp<br>
