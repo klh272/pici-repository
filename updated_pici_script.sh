@@ -10,6 +10,12 @@
 mkdir results
 mkdir PICIs
 
+if test -e "./BLAST_DB.tsv"; then
+
+	touch BLAST_DB.tsv
+	echo "Creating BLAST DB file."
+fi
+
 # Wrapper script that iterates over every sequence in directory "sequences"
 for f in ./sequences/*
 do

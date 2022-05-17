@@ -35,7 +35,7 @@ def get_locations(file, key_word):
   result2 = re.search('(?:.*?\#\ ){2}(.*?)(?=\ \#)', prot_list[b[0]])
   end = int(result2.group(1))
 
-  return start, end
+  return start-1, end-1
 
 ##########################################################################################################################################################################
 
@@ -106,31 +106,31 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 
 			border_df = pd.read_csv('BLAST_for_border', sep='\t', header = None)
 
-			if (pici_low_limit + int(border_df.iloc[0,6])) < 0:
+			if (pici_low_limit + int(border_df.iloc[0,6])-1) < 0:
 				final_seq_start = trim_list[pici_low_limit]
 				border_start = pici_low_limit
 				attL_start = "NA"
 				attL_end = "NA"
 				attC_L = "NA"
 			else:
-				final_seq_start = trim_list[pici_low_limit + int(border_df.iloc[0,6])]
-				border_start = pici_low_limit + int(border_df.iloc[0,6])
-				attL_start = trim_list[pici_low_limit + int(border_df.iloc[0,6])]
-				attL_end = trim_list[pici_low_limit + int(border_df.iloc[0,7])]
-				attC_L = record.seq[(pici_low_limit + int(border_df.iloc[0,6])):(pici_low_limit + int(border_df.iloc[0,7]))]
+				final_seq_start = trim_list[pici_low_limit + int(border_df.iloc[0,6])-1]
+				border_start = pici_low_limit + int(border_df.iloc[0,6])-1
+				attL_start = trim_list[pici_low_limit + int(border_df.iloc[0,6])-1]
+				attL_end = trim_list[pici_low_limit + int(border_df.iloc[0,7])-1]
+				attC_L = record.seq[(pici_low_limit + int(border_df.iloc[0,6])-1):(pici_low_limit + int(border_df.iloc[0,7])-1)]
 
-			if (prirep_location_end + int(border_df.iloc[0,9])) > pici_high_limit-1:
-				final_seq_end = trim_list[pici_high_limit-1]
+			if (prirep_location_end + int(border_df.iloc[0,9])-1) > pici_high_limit:
+				final_seq_end = trim_list[pici_high_limit]
 				border_end = pici_high_limit
 				attR_start = "NA"
 				attR_end = "NA"
 				attC_R = "NA"
 			else:
-				final_seq_end = trim_list[prirep_location_end + int(border_df.iloc[0,9])]
-				border_end = prirep_location_end + int(border_df.iloc[0,9])
-				attR_start = trim_list[prirep_location_end + int(border_df.iloc[0,8])]
-				attR_end = trim_list[prirep_location_end + int(border_df.iloc[0,9])]
-				attC_R = record.seq[(prirep_location_end + int(border_df.iloc[0,8])):(prirep_location_end + int(border_df.iloc[0,9]))]
+				final_seq_end = trim_list[prirep_location_end + int(border_df.iloc[0,9])-1]
+				border_end = prirep_location_end + int(border_df.iloc[0,9])-1
+				attR_start = trim_list[prirep_location_end + int(border_df.iloc[0,8])-1]
+				attR_end = trim_list[prirep_location_end + int(border_df.iloc[0,9])-1]
+				attC_R = record.seq[(prirep_location_end + int(border_df.iloc[0,8])-1):(prirep_location_end + int(border_df.iloc[0,9])-1)]
 
 		# register attC
 		if attC_L != attC_R:
@@ -216,31 +216,31 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 
 			border_df = pd.read_csv('BLAST_for_border', sep='\t', header = None)
 
-			if (pici_low_limit + int(border_df.iloc[0,8])) < 0:
+			if (pici_low_limit + int(border_df.iloc[0,8])-1) < 0:
 				final_seq_start = trim_list[pici_low_limit]
 				border_start = pici_low_limit
 				attL_start = "NA"
 				attL_end = "NA"
 				attC_L = "NA"
 			else:
-				final_seq_start = trim_list[pici_low_limit + int(border_df.iloc[0,8])]
-				border_start = pici_low_limit + int(border_df.iloc[0,8])
-				attL_start = trim_list[pici_low_limit + int(border_df.iloc[0,8])]
-				attL_end = trim_list[pici_low_limit + int(border_df.iloc[0,9])]
-				attC_L = record.seq[(pici_low_limit + int(border_df.iloc[0,8])):(pici_low_limit + int(border_df.iloc[0,9]))]
-			if (int_location_end + int(border_df.iloc[0,7])) > pici_high_limit-1:
-				final_seq_end = trim_list[pici_high_limit-1]
-				border_end = pici_high_limit-1
+				final_seq_start = trim_list[pici_low_limit + int(border_df.iloc[0,8])-1]
+				border_start = pici_low_limit + int(border_df.iloc[0,8])-1
+				attL_start = trim_list[pici_low_limit + int(border_df.iloc[0,8])-1]
+				attL_end = trim_list[pici_low_limit + int(border_df.iloc[0,9])-1]
+				attC_L = record.seq[(pici_low_limit + int(border_df.iloc[0,8])-1):(pici_low_limit + int(border_df.iloc[0,9])-1)]
+			if (int_location_end + int(border_df.iloc[0,7])-1) > pici_high_limit:
+				final_seq_end = trim_list[pici_high_limit]
+				border_end = pici_high_limit
 				attR_start = "NA"
 				attR_end = "NA"
 				attC_R = "NA"
 			else:
-				print("ERROR REPORT:", (int_location_end + int(border_df.iloc[0,7])), pici_high_limit, len(trim_list)-1)
-				final_seq_end = trim_list[int_location_end + int(border_df.iloc[0,7])]
-				border_end = int_location_end + int(border_df.iloc[0,7])
-				attR_start = trim_list[int_location_end + int(border_df.iloc[0,6])]
-				attR_end = trim_list[int_location_end + int(border_df.iloc[0,7])]
-				attC_R = record.seq[(int_location_end + int(border_df.iloc[0,6])):(int_location_end + int(border_df.iloc[0,7]))]
+				print("ERROR REPORT:", (int_location_end + int(border_df.iloc[0,7])-1), pici_high_limit, len(trim_list)-1)
+				final_seq_end = trim_list[int_location_end + int(border_df.iloc[0,7])-1]
+				border_end = int_location_end + int(border_df.iloc[0,7])-1
+				attR_start = trim_list[int_location_end + int(border_df.iloc[0,6])-1]
+				attR_end = trim_list[int_location_end + int(border_df.iloc[0,7])-1]
+				attC_R = record.seq[(int_location_end + int(border_df.iloc[0,6])-1):(int_location_end + int(border_df.iloc[0,7])-1)]
 
 		# register attC
 		if attC_L == "":
@@ -321,6 +321,23 @@ rpp_list = []
 ppi_list = []
 
 master_list = []
+
+# Read in BLAST_Db to get last unique ID num
+#BLAST_file = read.table(file = 'BLAST_DB.tsv', sep = '\t', header = FALSE)
+#if os.stat(BLAST_file).st_size == 0:
+#	master_db_int_num = 0
+#	master_db_alpA_num = 0
+#	master_db_sis_num = 0
+#	master_db_prirep_num = 0
+#	master_db_terS_num = 0
+#	master_db_ppi_num = 0
+#	master_db_rpp_num = 0
+#else:
+#	int_idx = BLAST_file.iloc.where
+
+
+#master_db_seq = ""
+
 
 fasta_file = 'all.fna'
 with open(fasta_file, mode='r') as handle:
@@ -403,8 +420,8 @@ with open(fasta_file, mode='r') as handle:
                         prirep_range_low = 0
 
                       # fix upper limit index to the length of the sequence if it is over
-                      if prirep_range_high >= len(record.seq):
-                        prirep_range_high = len(record.seq)
+                      if prirep_range_high >= len(record.seq)-1:
+                        prirep_range_high = len(record.seq)-1
 
                       # If the forward direction is true for PICI structure
                       if forward_direction == True:
@@ -447,7 +464,7 @@ with open(fasta_file, mode='r') as handle:
                                   # add PICI to list
                                   trim_start = int(record.description.split(';')[2])
                                   trim_end = int(record.description.split(';')[3])
-                                  trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
+                                  trim_list = [*range(int(trim_start), int(trim_end), 1)]
                                   if pici_high_limit > len(trim_list)-1:
                                     continue
                                   else:
@@ -531,9 +548,9 @@ with open(fasta_file, mode='r') as handle:
 
                                     master_list.append(str(record.description.replace(str(record.id), str(record.id).split("*")[0]).split(";")[0] + ";" + "G_neg_PICI" + ";" +
                                     str((border_end - border_start)) + ";" + str(final_seq_start) + ";" +  str(final_seq_end) + ";" + orientation + ";" + str(condensed_df.iloc[i,1]) +
-                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int_location_start) + ";" + str(int_location_end) + ";" + str(condensed_df.iloc[k,1]) + ";" +
-                                    str(condensed_df.iloc[k,2]) + ";" + str(alpA_location_start) + ";" + str(alpA_location_end) + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" +
-                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(prirep_location_start) + ";" + str(prirep_location_end) +
+                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int(trim_start) + int(int_location_start)) + ";" + str(int(trim_start) + int(int_location_end)) + ";" + str(condensed_df.iloc[k,1]) + ";" +
+                                    str(condensed_df.iloc[k,2]) + ";" + str(int(trim_start) + int(alpA_location_start)) + ";" + str(int(trim_start) + int(alpA_location_end)) + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" +
+                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(int(trim_start) + int(prirep_location_start)) + ";" + str(int(trim_start) + int(prirep_location_end)) +
                                     ";" + str(attL_start) + ";" + str(attL_end) + ";" + str(attR_start) + ";" + str(attR_end) + ";" + str(att_C) + ";" + quality + ";" +
                                     str(terS_present) + ";" + str(ppi_present) + ";" + str(rpp_present)))
 
@@ -650,9 +667,9 @@ with open(fasta_file, mode='r') as handle:
 
                                     master_list.append(str(record.description.replace(str(record.id), str(record.id).split("*")[0]).split(";")[0] + ";" + "G_neg_PICI" + ";" +
                                     str((border_end - border_start)) + ";" + str(final_seq_start) + ";" +  str(final_seq_end) + ";" + orientation + ";" + str(condensed_df.iloc[i,1]) +
-                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int_location_start) + ";" + str(int_location_end) + ";" + str(condensed_df.iloc[k,1]) + ";" +
-                                    str(condensed_df.iloc[k,2]) + ";" + str(alpA_location_start) + ";" + str(alpA_location_end) + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" +
-                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(prirep_location_start) + ";" + str(prirep_location_end) +
+                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int(trim_start) + int(int_location_start)) + ";" + str(int(trim_start) + int(int_location_end)) + ";" + str(condensed_df.iloc[k,1]) + ";" +
+                                    str(condensed_df.iloc[k,2]) + ";" + str(int(trim_start) + int(alpA_location_start)) + ";" + str(int(trim_start) + int(alpA_location_end)) + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" +
+                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(int(trim_start) + int(prirep_location_start)) + ";" + str(int(trim_start) + int(prirep_location_end)) +
                                     ";" + str(attL_start) + ";" + str(attL_end) + ";" + str(attR_start) + ";" + str(attR_end) + ";" + str(att_C) + ";" + quality + ";" +
                                     str(terS_present) + ";" + str(ppi_present) + ";" + str(rpp_present)))
 
@@ -711,8 +728,8 @@ with open(fasta_file, mode='r') as handle:
                         prirep_range_low = 0
 
                       # fix upper limit index to the length of the sequence if it is over
-                      if prirep_range_high >= len(record.seq):
-                        prirep_range_high = len(record.seq)
+                      if prirep_range_high >= len(record.seq)-1:
+                        prirep_range_high = len(record.seq)-1
 
 
 
@@ -832,9 +849,9 @@ with open(fasta_file, mode='r') as handle:
 
                                     master_list.append(str(record.description.replace(str(record.id), str(record.id).split("*")[0]).split(";")[0] + ";" + "SaPI" + ";" +
                                     str((border_end - border_start)) + ";" + str(final_seq_start) + ";" +  str(final_seq_end) + ";" + orientation + ";" + str(condensed_df.iloc[i,1]) +
-                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int_location_start) + ";" + str(int_location_end) + ";" + "NA" + ";" +
-                                    "NA" + ";" + "NA" + ";" + "NA" + ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(sis_location_start) + ";" + str(sis_location_end) +
-                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(prirep_location_start) + ";" + str(prirep_location_end) +
+                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int(trim_start) + int(int_location_start)) + ";" + str(int(trim_start) + int(int_location_end)) + ";" + "NA" + ";" +
+                                    "NA" + ";" + "NA" + ";" + "NA" + ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(int(trim_start) + int(sis_location_start)) + ";" + str(int(trim_start) + int(sis_location_end)) +
+                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(int(trim_start) + int(prirep_location_start)) + ";" + str(int(trim_start) + int(prirep_location_end)) +
                                     ";" + str(attL_start) + ";" + str(attL_end) + ";" + str(attR_start) + ";" + str(attR_end) + ";" + str(att_C) + ";" + quality + ";" +
                                     str(terS_present) + ";" + str(ppi_present) + ";" + str(rpp_present)))
 
@@ -956,9 +973,9 @@ with open(fasta_file, mode='r') as handle:
 
                                     master_list.append(str(record.description.replace(str(record.id), str(record.id).split("*")[0]).split(";")[0] + ";" + "SaPI" + ";" +
                                     str((border_end - border_start)) + ";" + str(final_seq_start) + ";" +  str(final_seq_end) + ";" + orientation + ";" + str(condensed_df.iloc[i,1]) +
-                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int_location_start) + ";" + str(int_location_end) + ";" + "NA" + ";" +
-                                    "NA" + ";" + "NA" + ";" + "NA" + ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(sis_location_start) + ";" + str(sis_location_end) +
-                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(prirep_location_start) + ";" + str(prirep_location_end) +
+                                    ";" + str(condensed_df.iloc[i,2]) + ";" + str(int(trim_start) + int(int_location_start)) + ";" + str(int(trim_start) + int(int_location_end)) + ";" + "NA" + ";" +
+                                    "NA" + ";" + "NA" + ";" + "NA" + ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(int(trim_start) + int(sis_location_start)) + ";" + str(int(trim_start) + int(sis_location_end)) +
+                                    ";" + str(condensed_df.iloc[l,1]) + ";" + str(condensed_df.iloc[l,2]) + ";" + str(int(trim_start) + int(prirep_location_start)) + ";" + str(int(trim_start) + int(prirep_location_end)) +
                                     ";" + str(attL_start) + ";" + str(attL_end) + ";" + str(attR_start) + ";" + str(attR_end) + ";" + str(att_C) + ";" + quality + ";" +
                                     str(terS_present) + ";" + str(ppi_present) + ";" + str(rpp_present)))
 
@@ -978,7 +995,7 @@ with open(fasta_file, mode='r') as handle:
                 #breaks loop if the index exceeds the dataframe length
                 if k >= condensed_df.shape[0]:
                   break
-                # otherwise get the gene number for pri-rep  
+                # otherwise get the gene number for pri-rep
                 elif condensed_df.iloc[k,0].startswith(record.id):
                   if condensed_df.iloc[k,1].startswith('pri-rep'):
                     prirep_prot_num = int((condensed_df.iloc[k,0]).split('_')[-1])
@@ -1104,9 +1121,9 @@ with open(fasta_file, mode='r') as handle:
 
                           master_list.append(str(record.description.replace(str(record.id), str(record.id).split("*")[0]).split(";")[0] + ";" + "phage_satellite" + ";" +
                           str((border_end - border_start)) + ";" + str(final_seq_start) + ";" +  str(final_seq_end) + ";" + orientation + ";" + str(condensed_df.iloc[i,1]) +
-                          ";" + str(condensed_df.iloc[i,2]) + ";" + str(int_location_start) + ";" + str(int_location_end) + ";" + "NA" + ";" +
+                          ";" + str(condensed_df.iloc[i,2]) + ";" + str(int(trim_start) + int(int_location_start)) + ";" + str(int(trim_start) + int(int_location_end)) + ";" + "NA" + ";" +
                           "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" +
-                          ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(prirep_location_start) + ";" + str(prirep_location_end) +
+                          ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(int(trim_start) + int(prirep_location_start)) + ";" + str(int(trim_start) + int(prirep_location_end)) +
                           ";" + str(attL_start) + ";" + str(attL_end) + ";" + str(attR_start) + ";" + str(attR_end) + ";" + str(att_C) + ";" + quality + ";" +
                           str(terS_present) + ";" + str(ppi_present) + ";" + str(rpp_present)))
 
@@ -1215,9 +1232,9 @@ with open(fasta_file, mode='r') as handle:
 
                           master_list.append(str(record.description.replace(str(record.id), str(record.id).split("*")[0]).split(";")[0] + ";" + "phage_satellite" + ";" +
                           str((border_end - border_start)) + ";" + str(final_seq_start) + ";" +  str(final_seq_end) + ";" + orientation + ";" + str(condensed_df.iloc[i,1]) +
-                          ";" + str(condensed_df.iloc[i,2]) + ";" + str(int_location_start) + ";" + str(int_location_end) + ";" + "NA" + ";" +
+                          ";" + str(condensed_df.iloc[i,2]) + ";" + str(int(trim_start) + int(int_location_start)) + ";" + str(int(trim_start) + int(int_location_end)) + ";" + "NA" + ";" +
                           "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" + ";" + "NA" +
-                          ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(prirep_location_start) + ";" + str(prirep_location_end) +
+                          ";" + str(condensed_df.iloc[k,1]) + ";" + str(condensed_df.iloc[k,2]) + ";" + str(int(trim_start) + int(prirep_location_start)) + ";" + str(int(trim_start) + int(prirep_location_end)) +
                           ";" + str(attL_start) + ";" + str(attL_end) + ";" + str(attR_start) + ";" + str(attR_end) + ";" + str(att_C) + ";" + quality + ";" +
                           str(terS_present) + ";" + str(ppi_present) + ";" + str(rpp_present)))
 

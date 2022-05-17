@@ -33,14 +33,14 @@ for i in range(len(df)):
     if df.iloc[i,0].startswith('int'): # find integrases in df
       if df.iloc[i,2] >= 70: # check it integrase identity is above 90%
         print('\nIntegrase found with identity >= 70% in', record_dict[df.iloc[i,1]].description)
-        print('Location: {} {}'.format(df.iloc[i,8], df.iloc[i,9]))
+        print('Location: {} {}'.format(df.iloc[i,8]-1, df.iloc[i,9]-1))
         print('BLAST database ID: ', df.iloc[i,0])
         print("Identity %%: ", df.iloc[i,2])
         print('Beginning trim...')
 
         # get integrase start/end
-        int_start = df.iloc[i,8]
-        int_end = df.iloc[i,9]
+        int_start = df.iloc[i,8]-1
+        int_end = df.iloc[i,9]-1
 
         trim_low = int_start - 30000
         trim_high = int_end + 30000
@@ -49,8 +49,8 @@ for i in range(len(df)):
         if trim_low < 0:
           trim_low = 0
         # fix upper limit index to the length of the sequence if it is over
-        if trim_high >= len(record_dict[df.iloc[i,1]].seq):
-          trim_high = len(record_dict[df.iloc[i,1]].seq)
+        if trim_high >= len(record_dict[df.iloc[i,1]].seq)-1:
+          trim_high = len(record_dict[df.iloc[i,1]].seq)-1
 
         # Append trim to list
         if record_dict[df.iloc[i,1]].id in name_list:
