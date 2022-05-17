@@ -27,3 +27,5 @@ wget https://raw.githubusercontent.com/klh272/pici-repository/main/genome_collec
 chmod +x ./scripts/updated_pici_script.sh
 chmod +x ./scripts/pici_collector.sh
 chmod +x ./scripts/genome_collector.sh
+
+rm setup.sh
