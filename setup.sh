@@ -11,7 +11,7 @@ mkdir scripts
 
 
 # set up databases
-wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_protein_db_new_integrases_21032022.fasta -P ./databases/BLAST_protein_db.faa
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_protein_db_new_integrases_21032022.fasta -P ./databases/ -O BLAST_protein_db.faa
 makeblastdb -in ./databases/BLAST_protein_db.faa -input_type fasta -dbtype prot -out ./databases/PICI_BLAST_DB
 
 # download scripts
