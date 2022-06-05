@@ -2,12 +2,27 @@ import os
 import re
 import pandas as pd
 
+import argparse
+
 from Bio.Seq import Seq
 from Bio import SeqIO
 #from StringIO import StringIO
 from Bio.Blast import NCBIXML
 from Bio.SeqRecord import SeqRecord
 from Bio.Blast.Applications import NcbiblastpCommandline
+
+##########################################################################################################################################################################
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--i', nargs='?', const=1, type=int, default=70)
+parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
+
+args = parser.parse_args()
+
+print('Int Identity percentage:', args.i)
+print('AlpA Identity percentage:', args.a)
+
 
 ##########################################################################################################################################################################
 
@@ -347,7 +362,7 @@ with open(fasta_file, mode='r') as handle:
     for i in range(len(condensed_df)):
       if condensed_df.iloc[i,0].startswith(record.id): # ensures same sequence in multi-sequence fasta file is being used
         if condensed_df.iloc[i,1].startswith('int'): # find integrases in df
-          if condensed_df.iloc[i,2] >= 70: # check it integrase identity is above 90%
+          if condensed_df.iloc[i,2] >= args.i: # check it integrase identity is above 90%
             print('Integrase found with identity >= 70%:')
             print(condensed_df.iloc[i,0].split('||')[0])
             
@@ -388,7 +403,7 @@ with open(fasta_file, mode='r') as handle:
               # otherwise get the gene number for alpA
               elif condensed_df.iloc[k,0].startswith(record.id):  
                 if condensed_df.iloc[k,1].startswith('alpA'):
-                  if condensed_df.iloc[k,2] >= 50: # check it alpA identity is above 50%
+                  if condensed_df.iloc[k,2] >= args.a: # check it alpA identity is above 50%
                     alpA_prot_num = int((condensed_df.iloc[k,0]).split('_')[-1])
 
                     # check to see if it is within 1-4 genes away from the integrase  

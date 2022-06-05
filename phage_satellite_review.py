@@ -2,6 +2,17 @@ import re
 import pandas as pd
 from Bio import SeqIO
 
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
+
+args = parser.parse_args()
+
+print('AlpA Identity percentage:', args.a)
+
+
 # read in BLAST alignment output
 df = pd.read_csv('BLAST_results.out', sep='\t', header = None)
 
@@ -34,7 +45,7 @@ with open(fasta_file, mode='r') as handle:
     for i in range(len(condensed_df)):
       if condensed_df.iloc[i,0].startswith(record.id): # ensures same sequence in multi-sequence fasta file is being used
         if condensed_df.iloc[i,1].startswith('alpA'): # find alpA'ss in df
-          if condensed_df.iloc[i,2] >= 50:
+          if condensed_df.iloc[i,2] >= args.a:
             # add PICI to list
             neg_name_list.append(record.id)
             neg_seq_list.append(record.seq)

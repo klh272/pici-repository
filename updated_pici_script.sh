@@ -7,14 +7,28 @@
 # Make sure when you run this script you are in the parent directory of "sequences" (EXAMPLE_PROJECT_NAME)
 # Make sure there is ONLY fasta files in your "sequences" directory
 
+database=${d:=0} # 0 is the putative db, 1 is the derived db
+integrase_identity=${i:=70}
+alpa_identity=${a:=50}
+
+while getopts d:i:a: flag
+do
+    case "${flag}" in
+        d) database=${OPTARG};;
+        i) integrase_identity=${OPTARG};;
+        a) alpa_identity=${OPTARG};;
+    esac
+done
+
+
 mkdir results
 mkdir PICIs
 
-if test -e "./BLAST_DB.tsv"; then
-
-	touch BLAST_DB.tsv
-	echo "Creating BLAST DB file."
-fi
+#if test -e "./BLAST_DB.tsv"; then
+#
+#	touch BLAST_DB.tsv
+#	echo "Creating BLAST DB file."
+#fi
 
 # Wrapper script that iterates over every sequence in directory "sequences"
 for f in ./sequences/*
@@ -31,13 +45,18 @@ do
         	cd tmp
         	mv ${f##*/} all.fna
         	
-        	#  Run tBLASTn 
-        	echo "Performing tBLASTn on ${f##*/}..."
-        	tblastn -query ./../../../databases/BLAST_protein_db.faa -subject ./all.fna -task tblastn -evalue 0.001 -outfmt 6 -out tBLASTn_results.out
-        	
+        	#  Run BLAST (note: the output name is the same regardless of BLAST operation)
+                if [ "$database" -eq "0" ]; then
+                        echo "Performing tBLASTn on ${f##*/}..."
+                	tblastn -query ./../../../databases/putative/BLAST_protein_db.faa -subject ./all.fna -task tblastn -evalue 0.001 -outfmt 6 -out tBLASTn_results.out
+                elif [ "$database" -eq "1" ]; then
+        		echo "Performing BLASTn on ${f##*/}..."
+        		blastn -query ./../../../databases/derived/BLAST_nucleotide_db.fna -subject ./all.fna -task blastn -evalue 0.001 -outfmt 6 -out tBLASTn_results.out
+        	fi
+
         	# Run integrase trimmer (calls the script in the data
         	echo "Beginning Trim on ${f##*/}..."
-        	python ./../../../scripts/pici_integrase_trimmer_script.py
+        	python ./../../../scripts/pici_integrase_trimmer_script.py --i $integrase_identity
         	
         	# If no integrases >= 90% identity then stop the current iteration
         	if ! [ -s trimmed_file ]; then
@@ -72,22 +91,25 @@ do
         	        # Run Blastp 
         	        echo "Performing BLASTp on ${f##*/}..."
         	        cd results/${f##*/}/
-        	        blastp -query ./all.pdg.faa -db ./../../../../databases/PICI_BLAST_DB -task blastp -evalue 0.001 -outfmt 6 -out BLASTp_results.out
-        	        
+                        if [ "$database" -eq "0" ]; then
+        	        	blastp -query ./all.pdg.faa -db ./../../../../databases/putative/PICI_BLAST_DB -task blastp -evalue 0.001 -outfmt 6 -out BLASTp_results.out
+        	        elif [ "$database" -eq "1" ]; then
+                                tblastn -query ./all.pdg.faa -db ./../../../../databases/derived/PICI_BLAST_DB -task tblastn -evalue 0.001 -outfmt 6 -out BLASTp_results.out
+                        fi
         	        # Set up for PICI typer
         	        echo "Running PICI-typer script on ${f##*/}..."
         	        mkdir python
 			cp ${f##*/} ./python # Preserves host info
         	        cp all.pdg.faa ./python
         	        cp BLASTp_results.out ./python
-			csplit ./hattci.out '/^--------------------------------------------$/' '{*}' #parses output to obtain table
+			#csplit ./hattci.out '/^--------------------------------------------$/' '{*}' #parses output to obtain table
 			cp xx00 ./python #parsed table from HattCI
         	        cd python
 			mv ${f##*/} all.fna
         	        
         	        
         	        # Run PICI typer script 
-        	        python3 ./../../../../../scripts/prototype_typer.py
+        	        python3 ./../../../../../scripts/prototype_typer.py --i $integrase_identity --a $alpa_identity
 			
 			# Remove duplicates
 			python3 ./../../../../../scripts/duplicate_remover.py
@@ -107,8 +129,12 @@ echo "Separating PICI type and phage satellites..."
 python3 ./../../scripts/pici_separator.py
 
 echo "Reviewing phage satellites..."
-blastx -query ./Phage_Satellites.fasta -subject ./../../databases/BLAST_protein_db.faa -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
-python3 ./../../scripts/phage_satellite_review.py
+if [ "$database" -eq "0" ]; then
+	blastx -query ./Phage_Satellites.fasta -subject ./../../databases/putative/BLAST_protein_db.faa -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
+elif [ "$database" -eq "1" ]; then
+	blastn -query ./Phage_Satellites.fasta -subject ./../../databases/derived/BLAST_nucleotide_db.fna -task blastn -evalue 0.001 -outfmt 6 -out BLAST_results.out
+fi
+python3 ./../../scripts/phage_satellite_review.py --a $alpa_identity
 sed -i -- 's/phage_satellite/G_neg_PICI/g' ./G_neg_PICI_reviewed
 cat G_neg_PICI_reviewed G_neg_PICIs.fasta SaPIs.fasta phage_satellite_reviewed > new_ALL_PICIs.fasta
 mv new_ALL_PICIs.fasta ALL_PICIs.fasta

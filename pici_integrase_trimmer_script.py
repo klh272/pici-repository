@@ -2,6 +2,18 @@ import os
 import pandas as pd
 from Bio import SeqIO
 
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--i', nargs='?', const=1, type=int, default=70)
+parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
+
+args = parser.parse_args()
+
+print('Int Identity percentage:', args.i)
+print('AlpA Identity percentage:', args.a)
+
 # read in tBLASTn alignment output
 df = pd.read_csv('tBLASTn_results.out', sep='\t', header = None)
 # create dictionary for fasta file
@@ -31,7 +43,7 @@ int_id = []
 # search BLAST results for integrases
 for i in range(len(df)):
     if df.iloc[i,0].startswith('int'): # find integrases in df
-      if df.iloc[i,2] >= 70: # check it integrase identity is above 90%
+      if df.iloc[i,2] >= args.i: # check it integrase identity is above 90%
         print('\nIntegrase found with identity >= 70% in', record_dict[df.iloc[i,1]].description)
         print('Location: {} {}'.format(df.iloc[i,8]-1, df.iloc[i,9]-1))
         print('BLAST database ID: ', df.iloc[i,0])
