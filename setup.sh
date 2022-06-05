@@ -33,4 +33,4 @@ chmod +x ./scripts/updated_pici_script.sh
 chmod +x ./scripts/pici_collector.sh
 chmod +x ./scripts/genome_collector.sh
 
-rm setup.sh
+# rm setup.sh
