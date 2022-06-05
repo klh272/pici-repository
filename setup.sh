@@ -13,11 +13,14 @@ mkdir scripts
 
 
 # set up databases
-wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_protein_db_new_integrases_21032022.fasta -P ./databases/putative/ -O BLAST_protein_db.faa
-makeblastdb -in ./databases/putative/BLAST_protein_db.faa -input_type fasta -dbtype prot -out ./databases/putative/PICI_BLAST_DB
-wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_nucleotide_db.fna -P ./databases/derived/ -O BLAST_nucleotide_db.fna
-makeblastdb -in ./databases/derived/BLAST_nucleotide_db.fna -input_type fasta -dbtype nucl -out ./databases/derived/PICI_BLAST_DB
+cd databases/putative
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_protein_db_new_integrases_21032022.fasta -O BLAST_protein_db.faa
+makeblastdb -in ./BLAST_protein_db.faa -input_type fasta -dbtype prot -out ./PICI_BLAST_DB
+cd ../derived
+wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_nucleotide_db.fna -O BLAST_nucleotide_db.fna
+makeblastdb -in ./BLAST_nucleotide_db.fna -input_type fasta -dbtype nucl -out .PICI_BLAST_DB
 
+cd ../..
 
 # download scripts
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/pici_integrase_trimmer_script.py -P ./scripts/
