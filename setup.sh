@@ -18,7 +18,7 @@ wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_protein
 makeblastdb -in ./BLAST_protein_db.faa -input_type fasta -dbtype prot -out ./PICI_BLAST_DB
 cd ../derived
 wget https://raw.githubusercontent.com/klh272/pici-repository/main/BLAST_nucleotide_db.fna -O BLAST_nucleotide_db.fna
-makeblastdb -in ./BLAST_nucleotide_db.fna -input_type fasta -dbtype nucl -out .PICI_BLAST_DB
+makeblastdb -in ./BLAST_nucleotide_db.fna -input_type fasta -dbtype nucl -out ./PICI_BLAST_DB
 
 cd ../..
 
