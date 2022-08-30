@@ -8,21 +8,30 @@
 # Make sure there is ONLY fasta files in your "sequences" directory
 
 database=${d:=0} # 0 is the putative db, 1 is the derived db
-integrase_identity=${i:=70}
+integrase_identity=${g:=70}
 alpa_identity=${a:=50}
+input=${i:=.}
+output=${o:=.}
+dir_in=${y:=./sequences}
+dir_out=${z:=.}
 
-while getopts d:i:a: flag
+
+while getopts d:g:a:i:o:y:z: flag
 do
     case "${flag}" in
         d) database=${OPTARG};;
-        i) integrase_identity=${OPTARG};;
+        g) integrase_identity=${OPTARG};;
         a) alpa_identity=${OPTARG};;
+        i) input=${OPTARG};;
+        o) output=${OPTARG};;
+        y) dir_in=${OPTARG};;
+        z) dir_out=${OPTARG};;
     esac
 done
 
 
 mkdir results
-mkdir PICIs
+mkdir tmp_PICIs
 
 #if test -e "./BLAST_DB.tsv"; then
 #
@@ -30,8 +39,13 @@ mkdir PICIs
 #	echo "Creating BLAST DB file."
 #fi
 
+
+
+
+
+
 # Wrapper script that iterates over every sequence in directory "sequences"
-for f in ./sequences/*
+for f in $dir_in/$input/*
 do
 	# Checks if file has already been processed
 	if test -e "./results/${f##*/}"; then
@@ -41,7 +55,7 @@ do
 		# Temporary folder to create a copy of sequence named "all.fna" so that it may be fed into pici_integrase_trimmer_script.py
         	echo "Processing ${f##*/}..."
         	mkdir tmp
-        	cp ./sequences/${f##*/} ./tmp
+        	cp $dir_in/${f##*/} ./tmp
         	cd tmp
         	mv ${f##*/} all.fna
         	
@@ -73,19 +87,11 @@ do
 
 			# Run Prodigal
 			echo "Running Prodigal on ${f##*/}..."
-			mkdir ./PICIs/${f##*/}
+			mkdir ./tmp_PICIs/${f##*/}
 			mkdir ./results/${f##*/}
 			prodigal -i ./tmp/${f##*/} -a ./results/${f##*/}/all.pdg.faa -f gff -o ./results/${f##*/}/all.pdg.gff -p meta
 
-			# Run HattCI
-			#echo "Running HattCI on ${f##*/}..."
-			#../../HattCI/hattci.out -b -t 4 ./tmp/${f##*/} ./results/${f##*/}/hattci.out
-
-        	        # Run VirSorter2
-        	        #echo "Running VirSorter2 on ${f##*/}..."
-        	        #mkdir ./PICIs/${f##*/}
-        	        #virsorter run -w ./results/${f##*/} -i ./tmp/${f##*/} -j 20 all
-			cp ./tmp/${f##*/} ./results/${f##*/} # this will preserve host info after running VirSorter2
+			cp ./tmp/${f##*/} ./results/${f##*/} # this will preserve host info
 			rm -r tmp
         	        
         	        # Run Blastp 
@@ -102,8 +108,6 @@ do
 			cp ${f##*/} ./python # Preserves host info
         	        cp all.pdg.faa ./python
         	        cp BLASTp_results.out ./python
-			#csplit ./hattci.out '/^--------------------------------------------$/' '{*}' #parses output to obtain table
-			cp xx00 ./python #parsed table from HattCI
         	        cd python
 			mv ${f##*/} all.fna
         	        
@@ -115,7 +119,7 @@ do
 			python3 ./../../../../../scripts/duplicate_remover.py
         	        
         	        # Move PICI results to PICI directory
-        	        mv ./PICI_results ./../../../PICIs/${f##*/}
+        	        mv ./PICI_results ./../../../tmp_PICIs/${f##*/}
         	        cd ../../../
         	        echo "Finished ${f##*/}..."
         	fi
@@ -151,3 +155,24 @@ echo "Creating table..."
 cat $(basename "$PWD")_ALL_PICIs.fasta | grep -e "^>" | sed 's/>//g' | sed 's/;/\t/g' > $(basename "$PWD")_PICI_table.tsv
 
 echo "Done."
+
+
+
+if [ "$output" == "." ]; then
+        continue
+else
+        mkdir $dir_out/$output/
+        mv $(basename "$PWD")_ALL_PICIs.fasta $dir_out/$output/${output}_ALL_PICIs.fasta
+        mv $(basename "$PWD")_G_neg_PICIs.fasta $dir_out/$output/${output}_G_neg_PICIs.fasta
+        #mv $(basename "$PWD")_SaPIs.fasta $dir_out/$output/${output}_SaPIs.fasta
+        mv $(basename "$PWD")_Phage_Satellites.fasta $dir_out/$output/${output}_Phage_Satellites.fasta
+        mv $(basename "$PWD")_PICI_table.tsv $dir_out/$output/${output}_PICI_table.tsv
+        mv $(basename "$PWD")_ALL_PICIs_host_genomes.fasta $dir_out/$output/${output}_ALL_PICIs_host_genomes.fasta
+        mv $(basename "$PWD")_G_neg_PICIs_host_genomes.fasta $dir_out/$output/${output}_G_neg_PICIs_host_genomes.fasta
+        mv $(basename "$PWD")_Phage_Satellites_host_genomes.fasta $dir_out/$output/${output}_Phage_Satellites_host_genomes.fasta
+        mv $(basename "$PWD")_ALL_PICIs_host_names.txt $dir_out/$output/${output}_ALL_PICIs_host_names.txt
+        mv $(basename "$PWD")_G_neg_PICIs_host_names.txt $dir_out/$output/${output}_G_neg_PICIs_host_names.txt
+        mv $(basename "$PWD")_Phage_Satellites_host_names.txt $dir_out/$output/${output}_Phage_Satellites_host_names.txt
+
+fi
+
