@@ -6,7 +6,7 @@
 # In EXAMPLE_PROJECT_NAME set up a child directory "sequences" with all your data (./sequences/EXAMPLE_DATA.fasta)
 # Make sure when you run this script you are in the parent directory of "sequences" (EXAMPLE_PROJECT_NAME)
 # Make sure there is ONLY fasta files in your "sequences" directory
-
+#test
 database=${d:=0} # 0 is the putative db, 1 is the derived db
 integrase_identity=${g:=70}
 alpa_identity=${a:=50}
