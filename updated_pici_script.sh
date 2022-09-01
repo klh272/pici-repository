@@ -41,6 +41,7 @@ sequences_dir=${dir_in}/${input}/sequences
 for f in ${sequences_dir}/*
 do
     echo "${f}"
+    echo ${sequences_dir}/${f##*/}
     # Checks if file has already been processed
     if test -e "${dir_in}/results/${f##*/}"; then
     		echo "${f##*/} has already been processed. The sequence will be skipped. If you wish you re-run this sequence remove the corresponding directory from \"result\"."
@@ -50,11 +51,9 @@ do
 	    TEMP_NAME=${f##*/}
         	echo "Processing ${TEMP_NAME}..."
         	TEMP=`mktemp -d`
-        	cp $dir_in/${f##*/} $TEMP
-#        	cd $TEMP
-        	mv "${TEMP}/${f##*/}" "${TEMP}/all.fna"
+        	cp ${f} "$TEMP/all.fna"
         	TEMP_FASTA="${TEMP}/all.fna"
-	
+		echo ${TEMP} #Delete this
         	#  Run BLAST (note: the output name is the same regardless of BLAST operation)
                 if [ "$database" -eq "0" ]; then
                         echo "Performing tBLASTn on ${TEMP_NAME}..."
@@ -74,10 +73,10 @@ do
         	        #rm -r ${TEMP} 
         	        echo "Terminating ${TEMP_NAME}: no match for integrase..."
         	        continue
-        	        
+
         	# else continue with script
         	else
-        	        # convert trimmed file back to original filename
+        	       # convert trimmed file back to original filename
         	        mv trimmed_file ${f##*/}
         	        cd ..
 
@@ -122,19 +121,20 @@ do
 	fi
 done
 
+
 echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
-./../../scripts/pici_collector.sh
+${scripts_path}/scripts/pici_collector.sh
 
 echo "Separating PICI type and phage satellites..."
-python3 ./../../scripts/pici_separator.py
+python ${scripts_path}/scripts/pici_separator.py
 
 echo "Reviewing phage satellites..."
 if [ "$database" -eq "0" ]; then
-	blastx -query ./Phage_Satellites.fasta -subject ${db_nuc_path} -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
+	blastx -query ./Phage_Satellites.fasta -subject ${db_prot_path} -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
 elif [ "$database" -eq "1" ]; then
-	blastn -query ./Phage_Satellites.fasta -subject ./../../databases/derived/BLAST_nucleotide_db.fna -task blastn -evalue 0.001 -outfmt 6 -out BLAST_results.out
+	blastn -query ./Phage_Satellites.fasta -subject ${db_nuc_path} -task blastn -evalue 0.001 -outfmt 6 -out BLAST_results.out
 fi
-python3 ./../../scripts/phage_satellite_review.py --a $alpa_identity
+python ${scripts_path}/scripts/phage_satellite_review.py --a $alpa_identity
 sed -i -- 's/phage_satellite/G_neg_PICI/g' ./G_neg_PICI_reviewed
 cat G_neg_PICI_reviewed G_neg_PICIs.fasta SaPIs.fasta phage_satellite_reviewed > new_ALL_PICIs.fasta
 mv new_ALL_PICIs.fasta ALL_PICIs.fasta
