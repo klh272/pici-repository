@@ -1,5 +1,5 @@
 #! /bin/sh
-
+set -x
 # Set up your projects in the "data" directory
 # For example: ./data/EXAMPLE_PROJECT_NAME
 # Inside EXAMPLE_PROJECT_NAME is where your sequences, PICIs, and VirSorter2/BLAST results will be stored for that project
@@ -7,6 +7,8 @@
 # Make sure when you run this script you are in the parent directory of "sequences" (EXAMPLE_PROJECT_NAME)
 # Make sure there is ONLY fasta files in your "sequences" directory
 #test
+db_nuc_path=./../../../databases/derived/BLAST_nucleotide_db.fna
+db_prot_path=./../../pici_typer/databases/putative/BLAST_protein_db.faa
 database=${d:=0} # 0 is the putative db, 1 is the derived db
 integrase_identity=${g:=70}
 alpa_identity=${a:=50}
@@ -30,42 +32,33 @@ do
 done
 
 
-mkdir results
-mkdir tmp_PICIs
-
-#if test -e "./BLAST_DB.tsv"; then
-#
-#	touch BLAST_DB.tsv
-#	echo "Creating BLAST DB file."
-#fi
-
-
-
-
-
+mkdir -p "${dir_in}/results"
+mkdir -p "${dir_in}/tmp_PICIs"
 
 # Wrapper script that iterates over every sequence in directory "sequences"
-for f in $dir_in/$input/*
+for f in ${dir_in}/${input}/*
 do
-	# Checks if file has already been processed
-	if test -e "./results/${f##*/}"; then
+    echo "${f}"
+    # Checks if file has already been processed
+	if test -e "${dir_in}/results/${f##*/}"; then
     		echo "${f##*/} has already been processed. The sequence will be skipped. If you wish you re-run this sequence remove the corresponding directory from \"result\"."
 		continue
 	else
 		# Temporary folder to create a copy of sequence named "all.fna" so that it may be fed into pici_integrase_trimmer_script.py
         	echo "Processing ${f##*/}..."
-        	mkdir tmp
-        	cp $dir_in/${f##*/} ./tmp
-        	cd tmp
-        	mv ${f##*/} all.fna
-        	
+        	TEMP=`mktemp -d`
+        	cp $dir_in/${f##*/} $TEMP
+#        	cd $TEMP
+        	mv "${TEMP}/${f##*/}" "${TEMP}/all.fna"
+        	TEMP_FASTA="${TEMP}/all.fna"
+	
         	#  Run BLAST (note: the output name is the same regardless of BLAST operation)
                 if [ "$database" -eq "0" ]; then
                         echo "Performing tBLASTn on ${f##*/}..."
-                	tblastn -query ./../../../databases/putative/BLAST_protein_db.faa -subject ./all.fna -task tblastn -evalue 0.001 -outfmt 6 -out tBLASTn_results.out
+                	tblastn -query ${db_prot_path} -subject ${TEMP_FASTA} -task tblastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out"
                 elif [ "$database" -eq "1" ]; then
         		echo "Performing BLASTn on ${f##*/}..."
-        		blastn -query ./../../../databases/derived/BLAST_nucleotide_db.fna -subject ./all.fna -task blastn -evalue 0.001 -outfmt 6 -out tBLASTn_results.out
+        		blastn -query ${db_nuc_path} -subject ${TEMP_FASTA} -task blastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out"
         	fi
 
         	# Run integrase trimmer (calls the script in the data
@@ -134,7 +127,7 @@ python3 ./../../scripts/pici_separator.py
 
 echo "Reviewing phage satellites..."
 if [ "$database" -eq "0" ]; then
-	blastx -query ./Phage_Satellites.fasta -subject ./../../databases/putative/BLAST_protein_db.faa -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
+	blastx -query ./Phage_Satellites.fasta -subject ${db_nuc_path} -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
 elif [ "$database" -eq "1" ]; then
 	blastn -query ./Phage_Satellites.fasta -subject ./../../databases/derived/BLAST_nucleotide_db.fna -task blastn -evalue 0.001 -outfmt 6 -out BLAST_results.out
 fi
