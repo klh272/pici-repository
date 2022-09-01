@@ -11,6 +11,7 @@ parser.add_argument('--i', nargs='?', const=1, type=int, default=70)
 parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
 parser.add_argument('--blast', type=pathlib.Path, default='tBLASTn_results.out')
 parser.add_argument('--fasta', type=pathlib.Path, default='all.fna')
+parser.add_argument('--output', type=pathlib.Path, default='trimmed_file')
 args = parser.parse_args()
 
 print('Int Identity percentage:', args.i)
@@ -112,8 +113,9 @@ for i in range(len(df)):
 
 
 # write trimmed sequence(s) to file
-print('Writing {} trims to output file \"trimmed_file\"'.format(len(seq_list)))
-trimmed_file = open("trimmed_file", "w")
+#print('Writing {} trims to output file \"trimmed_file\"'.format(len(seq_list)))
+print("Writing %s trims to output file %s" % (len(seq_list), args.output))
+trimmed_file = open(args.output, "w")
 
 for m in range(len(seq_list)):
   trimmed_file.write(">" + str(description_list[m].replace(name_list[m], name_list[m] + "*" + str(m))) + ";" + str(int_id[m]) + ";" + str(trim_start[m]) + ";" + str(trim_end[m]) +  "\n" + str(seq_list[m]) + "\n")
