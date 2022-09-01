@@ -77,17 +77,17 @@ do
         	# else continue with script
         	else
         	       # convert trimmed file back to original filename
-        	        mv trimmed_file ${f##*/}
+        	        mv "${TEMP}/trimmed_file" ${TEMP}/${TEMP_NAME} #WTF
         	        cd ..
 
 			# Run Prodigal
 			echo "Running Prodigal on ${f##*/}..."
-			mkdir ./tmp_PICIs/${f##*/}
-			mkdir ./results/${f##*/}
-			prodigal -i ./tmp/${f##*/} -a ./results/${f##*/}/all.pdg.faa -f gff -o ./results/${f##*/}/all.pdg.gff -p meta
+			mkdir ${dir_in/tmp_PICIs/${TEMP_NAME}
+			mkdir ${dir_in/results/${TEMP_NAME}
+			prodigal -i ${TEMP}/${TEMP_NAME} -a ${dir_in/results/${TEMP_NAME}/all.pdg.faa -f gff -o ${dir_in/results/${f##*/}/all.pdg.gff -p meta
 
-			cp ./tmp/${f##*/} ./results/${f##*/} # this will preserve host info
-			rm -r tmp
+			cp ${TEMP}/${TEMP_NAME} ${dir_in/results/${TEMP_NAME} # this will preserve host info
+			#rm -r tmp
         	        
         	        # Run Blastp 
         	        echo "Performing BLASTp on ${f##*/}..."
@@ -120,6 +120,12 @@ do
         	fi
 	fi
 done
+
+#Exit the typer if no PICIs were found
+if [ ! "$(ls -A ${dir_in}/results)" ]; then
+    echo "${dir_in}/results is  empty"
+    exit 0
+fi
 
 
 echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
