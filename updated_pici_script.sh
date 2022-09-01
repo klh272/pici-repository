@@ -1,12 +1,14 @@
 #! /bin/sh
-set -x
+#set -x
 # Set up your projects in the "data" directory
 # For example: ./data/EXAMPLE_PROJECT_NAME
 # Inside EXAMPLE_PROJECT_NAME is where your sequences, PICIs, and VirSorter2/BLAST results will be stored for that project
 # In EXAMPLE_PROJECT_NAME set up a child directory "sequences" with all your data (./sequences/EXAMPLE_DATA.fasta)
 # Make sure when you run this script you are in the parent directory of "sequences" (EXAMPLE_PROJECT_NAME)
 # Make sure there is ONLY fasta files in your "sequences" directory
-#test
+
+
+scripts_path=$(dirname $(readlink -f $0))
 db_nuc_path=./../../../databases/derived/BLAST_nucleotide_db.fna
 db_prot_path=./../../pici_typer/databases/putative/BLAST_protein_db.faa
 database=${d:=0} # 0 is the putative db, 1 is the derived db
@@ -34,18 +36,19 @@ done
 
 mkdir -p "${dir_in}/results"
 mkdir -p "${dir_in}/tmp_PICIs"
-
+sequences_dir=${dir_in}/${input}/sequences
 # Wrapper script that iterates over every sequence in directory "sequences"
-for f in ${dir_in}/${input}/*
+for f in ${sequences_dir}/*
 do
     echo "${f}"
     # Checks if file has already been processed
-	if test -e "${dir_in}/results/${f##*/}"; then
+    if test -e "${dir_in}/results/${f##*/}"; then
     		echo "${f##*/} has already been processed. The sequence will be skipped. If you wish you re-run this sequence remove the corresponding directory from \"result\"."
 		continue
 	else
-		# Temporary folder to create a copy of sequence named "all.fna" so that it may be fed into pici_integrase_trimmer_script.py
-        	echo "Processing ${f##*/}..."
+	    # Temporary folder to create a copy of sequence named "all.fna" so that it may be fed into pici_integrase_trimmer_script.py
+	    TEMP_NAME=${f##*/}
+        	echo "Processing ${TEMP_NAME}..."
         	TEMP=`mktemp -d`
         	cp $dir_in/${f##*/} $TEMP
 #        	cd $TEMP
@@ -54,22 +57,22 @@ do
 	
         	#  Run BLAST (note: the output name is the same regardless of BLAST operation)
                 if [ "$database" -eq "0" ]; then
-                        echo "Performing tBLASTn on ${f##*/}..."
+                        echo "Performing tBLASTn on ${TEMP_NAME}..."
                 	tblastn -query ${db_prot_path} -subject ${TEMP_FASTA} -task tblastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out"
                 elif [ "$database" -eq "1" ]; then
-        		echo "Performing BLASTn on ${f##*/}..."
+        		echo "Performing BLASTn on ${TEMP_NAME}..."
         		blastn -query ${db_nuc_path} -subject ${TEMP_FASTA} -task blastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out"
         	fi
 
         	# Run integrase trimmer (calls the script in the data
-        	echo "Beginning Trim on ${f##*/}..."
-        	python ./../../../scripts/pici_integrase_trimmer_script.py --i $integrase_identity
+        	echo "Beginning Trim on ${TEMP_NAME}..."
+        	python ${scripts_path}/pici_integrase_trimmer_script.py --i $integrase_identity --blast "${TEMP}/tBLASTn_results.out" --fasta "${TEMP}/all.fna" --output "${TEMP}/trimmed_file"
         	
         	# If no integrases >= 90% identity then stop the current iteration
-        	if ! [ -s trimmed_file ]; then
+        	if ! [ -s "${TEMP}/trimmed_file" ]; then
         	        cd ..
-        	        rm -r tmp
-        	        echo "Terminating ${f##*/}: no match for integrase..."
+        	        #rm -r ${TEMP} 
+        	        echo "Terminating ${TEMP_NAME}: no match for integrase..."
         	        continue
         	        
         	# else continue with script
