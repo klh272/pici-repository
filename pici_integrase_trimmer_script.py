@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from Bio import SeqIO
+import pathlib
 
 import argparse
 
@@ -8,16 +9,17 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--i', nargs='?', const=1, type=int, default=70)
 parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
-
+parser.add_argument('--blast', type=pathlib.Path, default='tBLASTn_results.out')
+parser.add_argument('--fasta', type=pathlib.Path, default='all.fna')
 args = parser.parse_args()
 
 print('Int Identity percentage:', args.i)
 print('AlpA Identity percentage:', args.a)
 
 # read in tBLASTn alignment output
-df = pd.read_csv('tBLASTn_results.out', sep='\t', header = None)
+df = pd.read_csv(args.blast, sep='\t', header = None)
 # create dictionary for fasta file
-record_dict = SeqIO.to_dict(SeqIO.parse("all.fna", "fasta"))
+record_dict = SeqIO.to_dict(SeqIO.parse(args.fasta, "fasta"))
 
 def range_subset(range1, range2):
     """Whether range1 is a subset of range2. 
