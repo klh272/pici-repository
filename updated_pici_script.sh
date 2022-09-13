@@ -1,5 +1,5 @@
 #! /bin/sh
-#set -x
+set -x
 # Set up your projects in the "data" directory
 # For example: ./data/EXAMPLE_PROJECT_NAME
 # Inside EXAMPLE_PROJECT_NAME is where your sequences, PICIs, and VirSorter2/BLAST results will be stored for that project
@@ -41,16 +41,18 @@ sequences_dir=${dir_in}/${input}/sequences
 for f in ${sequences_dir}/*
 do
     echo "${f}"
-    echo ${sequences_dir}/${f##*/}
     # Checks if file has already been processed
     if test -e "${dir_in}/results/${f##*/}"; then
-    		echo "${f##*/} has already been processed. The sequence will be skipped. If you wish you re-run this sequence remove the corresponding directory from \"result\"."
-		continue
+    	echo "${f##*/} has already been processed. The sequence will be skipped. If you wish you re-run this sequence remove the corresponding directory from \"result\"."
+	continue
+	
 	else
 	    # Temporary folder to create a copy of sequence named "all.fna" so that it may be fed into pici_integrase_trimmer_script.py
 	    TEMP_NAME=${f##*/}
-        	echo "Processing ${TEMP_NAME}..."
-        	TEMP=`mktemp -d`
+            echo "Processing ${TEMP_NAME}..."
+            TEMP=`mktemp -d`
+	    echo `pwd`
+	    ls ${f}
         	cp ${f} "$TEMP/all.fna"
         	TEMP_FASTA="${TEMP}/all.fna"
 		echo ${TEMP} #Delete this
@@ -69,7 +71,7 @@ do
         	
         	# If no integrases >= 90% identity then stop the current iteration
         	if ! [ -s "${TEMP}/trimmed_file" ]; then
-        	        cd ..
+
         	        #rm -r ${TEMP} 
         	        echo "Terminating ${TEMP_NAME}: no match for integrase..."
         	        continue
@@ -78,44 +80,45 @@ do
         	else
         	       # convert trimmed file back to original filename
         	        mv "${TEMP}/trimmed_file" ${TEMP}/${TEMP_NAME} #WTF
-        	        cd ..
+        	     #   cd ..
 
 			# Run Prodigal
-			echo "Running Prodigal on ${f##*/}..."
-			mkdir ${dir_in/tmp_PICIs/${TEMP_NAME}
-			mkdir ${dir_in/results/${TEMP_NAME}
-			prodigal -i ${TEMP}/${TEMP_NAME} -a ${dir_in/results/${TEMP_NAME}/all.pdg.faa -f gff -o ${dir_in/results/${f##*/}/all.pdg.gff -p meta
-
-			cp ${TEMP}/${TEMP_NAME} ${dir_in/results/${TEMP_NAME} # this will preserve host info
+			echo "Running Prodigal on ${TEMP_NAME}..."
+			mkdir -p ${dir_in}/tmp_PICIs/${TEMP_NAME}
+			mkdir -p ${dir_in}/results/${TEMP_NAME}
+			prodigal -i ${TEMP}/${TEMP_NAME} -a ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -f gff -o ${dir_in}/results/${TEMP_NAME}/all.pdg.gff -p meta
+			AAFILE=${dir_in}/results/${TEMP_NAME}/all.pdg.faa
+			
+			cp ${TEMP}/${TEMP_NAME} ${dir_in}/results/${TEMP_NAME} # this will preserve host info
 			#rm -r tmp
         	        
         	        # Run Blastp 
         	        echo "Performing BLASTp on ${f##*/}..."
-        	        cd results/${f##*/}/
+        	      #  cd results/${f##*/}/
                         if [ "$database" -eq "0" ]; then
-        	        	blastp -query ./all.pdg.faa -db ./../../../../databases/putative/PICI_BLAST_DB -task blastp -evalue 0.001 -outfmt 6 -out BLASTp_results.out
+        	        	blastp -query ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -db ${db_prot_path} -task blastp -evalue 0.001 -outfmt 6 -out ${TEMP}/BLASTp_results.out
         	        elif [ "$database" -eq "1" ]; then
-                                tblastn -query ./all.pdg.faa -db ./../../../../databases/derived/PICI_BLAST_DB -task tblastn -evalue 0.001 -outfmt 6 -out BLASTp_results.out
+                                tblastn -query ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -db ${db_nuc_path} -task tblastn -evalue 0.001 -outfmt 6 -out ${TEMP}/BLASTp_results.out
                         fi
         	        # Set up for PICI typer
         	        echo "Running PICI-typer script on ${f##*/}..."
-        	        mkdir python
-			cp ${f##*/} ./python # Preserves host info
-        	        cp all.pdg.faa ./python
-        	        cp BLASTp_results.out ./python
-        	        cd python
-			mv ${f##*/} all.fna
+        	        mkdir ${TEMP}/python
+			cp ${sequences_dir}/${TEMP_NAME} ${TEMP}/python # Preserves host info
+        	        cp ${AAFILE} ${TEMP}/python
+        	        cp ${TEMP}/BLASTp_results.out ${TEMP}/python
+        	       # cd python
+			mv ${f##*/} all.fna #WTF
         	        
         	        
         	        # Run PICI typer script 
-        	        python3 ./../../../../../scripts/prototype_typer.py --i $integrase_identity --a $alpa_identity
+        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity
 			
 			# Remove duplicates
-			python3 ./../../../../../scripts/duplicate_remover.py
+			python3 ${scripts_path}/duplicate_remover.py
         	        
         	        # Move PICI results to PICI directory
         	        mv ./PICI_results ./../../../tmp_PICIs/${f##*/}
-        	        cd ../../../
+        	        #cd ../../../
         	        echo "Finished ${f##*/}..."
         	fi
 	fi
