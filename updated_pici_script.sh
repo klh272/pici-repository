@@ -11,6 +11,7 @@ set -x
 scripts_path=$(dirname $(readlink -f $0))
 db_nuc_path=./../../../databases/derived/BLAST_nucleotide_db.fna
 db_prot_path=./../../pici_typer/databases/putative/BLAST_protein_db.faa
+db_blastp_path=./../../pici_typer/databases/putative/PICI_BLAST_DB
 database=${d:=0} # 0 is the putative db, 1 is the derived db
 integrase_identity=${g:=70}
 alpa_identity=${a:=50}
@@ -96,7 +97,7 @@ do
         	        echo "Performing BLASTp on ${f##*/}..."
         	      #  cd results/${f##*/}/
                         if [ "$database" -eq "0" ]; then
-        	        	blastp -query ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -db ${db_prot_path} -task blastp -evalue 0.001 -outfmt 6 -out ${TEMP}/BLASTp_results.out
+        	        	blastp -query ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -db ${db_blastp_path} -task blastp -evalue 0.001 -outfmt 6 -out ${TEMP}/BLASTp_results.out
         	        elif [ "$database" -eq "1" ]; then
                                 tblastn -query ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -db ${db_nuc_path} -task tblastn -evalue 0.001 -outfmt 6 -out ${TEMP}/BLASTp_results.out
                         fi
@@ -107,7 +108,7 @@ do
         	        cp ${AAFILE} ${TEMP}/python
         	        cp ${TEMP}/BLASTp_results.out ${TEMP}/python
         	       # cd python
-			mv ${f##*/} all.fna #WTF
+			#mv ${f##*/} all.fna #WTF, think it should be covered above
         	        
         	        
         	        # Run PICI typer script 
