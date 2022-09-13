@@ -112,19 +112,20 @@ do
         	        
         	        
         	        # Run PICI typer script 
-        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity
+        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity --blast "${TEMP}/tBLASTn_results.out" --fasta "${TEMP}/all.fna" --output "${TEMP}/PICI_results"
 			
 			# Remove duplicates
-			python3 ${scripts_path}/duplicate_remover.py
+			python ${scripts_path}/duplicate_remover.py --input "${TEMP}/PICI_results" --output "${TEMP}/PICI_results"
         	        
         	        # Move PICI results to PICI directory
-        	        mv ./PICI_results ./../../../tmp_PICIs/${f##*/}
+        	        mv "${TEMP}/PICI_results" "${dir_in}/tmp_PICIs/"
         	        #cd ../../../
-        	        echo "Finished ${f##*/}..."
+        	        echo "Finished ${TEMP_NAME}..."
         	fi
 	fi
 done
 
+exit 1
 #Exit the typer if no PICIs were found
 if [ ! "$(ls -A ${dir_in}/results)" ]; then
     echo "${dir_in}/results is  empty"
