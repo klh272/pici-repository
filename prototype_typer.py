@@ -1,7 +1,7 @@
 import os
 import re
 import pandas as pd
-
+import pathlib
 import argparse
 
 from Bio.Seq import Seq
@@ -14,7 +14,9 @@ from Bio.Blast.Applications import NcbiblastpCommandline
 ##########################################################################################################################################################################
 
 parser = argparse.ArgumentParser()
-
+parser.add_argument('--blast', type=pathlib.Path, default='BLASTp_results.out')
+parser.add_argument('--fasta', type=pathlib.Path, default='all.fna')
+parser.add_argument('--output', type=pathlib.Path, default='trimmed_file')
 parser.add_argument('--i', nargs='?', const=1, type=int, default=70)
 parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
 
@@ -27,7 +29,7 @@ print('AlpA Identity percentage:', args.a)
 ##########################################################################################################################################################################
 
 # read in BLAST alignment output
-df = pd.read_csv('BLASTp_results.out', sep='\t', header = None)
+df = pd.read_csv(args.blast, sep='\t', header = None)
 # take the max identity % (column "2") for each alignment and drop the duplicates
 condensed_df = df.sort_values([2], ascending=False).drop_duplicates([0]).sort_index()
 condensed_df.reset_index(drop=True, inplace=True)
@@ -354,7 +356,7 @@ master_list = []
 #master_db_seq = ""
 
 
-fasta_file = 'all.fna'
+fasta_file = args.fasta
 with open(fasta_file, mode='r') as handle:
   
   for record in SeqIO.parse(handle, 'fasta'):
@@ -1284,7 +1286,7 @@ with open(fasta_file, mode='r') as handle:
 
 
 # write PICI sequence to file
-PICI_file = open("PICI_results", "w")
+PICI_file = open(args.output, "w")
 
 print("SEQ LIST LENGTH:", len(seq_list))
 print("MASTER LIST LENGTH:", len(master_list))

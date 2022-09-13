@@ -80,7 +80,7 @@ do
         	# else continue with script
         	else
         	       # convert trimmed file back to original filename
-        	        mv "${TEMP}/trimmed_file" ${TEMP}/${TEMP_NAME} #WTF
+        	        cp "${TEMP}/trimmed_file" ${TEMP}/${TEMP_NAME} #WTF
         	     #   cd ..
 
 			# Run Prodigal
@@ -134,7 +134,15 @@ fi
 
 
 echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
-${scripts_path}/scripts/pici_collector.sh
+#${scripts_path}/scripts/pici_collector.sh
+touch "${TEMP}/ALL_PICIs.fasta"
+
+for f in ./PICIs/*
+do
+        cat ./PICIs/${f##*/}/PICI_results >> ALL_PICIs.fasta
+
+done
+
 
 echo "Separating PICI type and phage satellites..."
 python ${scripts_path}/scripts/pici_separator.py
