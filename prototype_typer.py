@@ -14,6 +14,7 @@ from Bio.Blast.Applications import NcbiblastpCommandline
 ##########################################################################################################################################################################
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--aa', type=pathlib.Path, default='all.pdg.faa')
 parser.add_argument('--blast', type=pathlib.Path, default='BLASTp_results.out')
 parser.add_argument('--fasta', type=pathlib.Path, default='all.fna')
 parser.add_argument('--output', type=pathlib.Path, default='trimmed_file')
@@ -419,8 +420,8 @@ with open(fasta_file, mode='r') as handle:
 
                       # Get protein locations in host
                       # get the location of alpA and see if pri-rep is within 25 kb to left or right (50kb total)
-                      int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
-                      alpA_location_start, alpA_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
+                      int_location_start, int_location_end = get_locations(args.aa, condensed_df.iloc[i,0])
+                      alpA_location_start, alpA_location_end = get_locations(args.aa, condensed_df.iloc[k,0])
                       print('\nBeginning G- PICI determination...')
                       print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
                       print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
@@ -450,7 +451,7 @@ with open(fasta_file, mode='r') as handle:
                         for l in range(len(condensed_df)):
                           if condensed_df.iloc[l,0].startswith(record.id):
                             if condensed_df.iloc[l,1].startswith('pri-rep'): # find prirep in df
-                              prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[l,0])
+                              prirep_location_start, prirep_location_end = get_locations(args.aa, condensed_df.iloc[l,0])
                               prirep_range = range(prirep_location_start,prirep_location_end)
                               prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
 
@@ -498,7 +499,7 @@ with open(fasta_file, mode='r') as handle:
                                     for r in range(len(condensed_df)):
                                       if condensed_df.iloc[r,0].startswith(record.id):
                                         if condensed_df.iloc[r,1].startswith('terS'): # find terS in df
-                                          terS_location_start, terS_location_end = get_locations("all.pdg.faa", condensed_df.iloc[r,0])
+                                          terS_location_start, terS_location_end = get_locations(args.aa, condensed_df.iloc[r,0])
                                           terS_range = range(terS_location_start,terS_location_end)
 
                                           if range_subset(terS_range, range(border_start, border_end)) == True:
@@ -508,7 +509,7 @@ with open(fasta_file, mode='r') as handle:
                                     for s in range(len(condensed_df)):
                                       if condensed_df.iloc[s,0].startswith(record.id):
                                         if condensed_df.iloc[s,1].startswith('ppi'): # find terS in df
-                                          ppi_location_start, ppi_location_end = get_locations("all.pdg.faa", condensed_df.iloc[s,0])
+                                          ppi_location_start, ppi_location_end = get_locations(args.aa, condensed_df.iloc[s,0])
                                           ppi_range = range(ppi_location_start,ppi_location_end)
 
                                           if range_subset(ppi_range, range(border_start, border_end)) == True:
@@ -518,7 +519,7 @@ with open(fasta_file, mode='r') as handle:
                                     for t in range(len(condensed_df)):
                                       if condensed_df.iloc[t,0].startswith(record.id):
                                         if condensed_df.iloc[t,1].startswith('rpp'): # find terS in df
-                                          rpp_location_start, rpp_location_end = get_locations("all.pdg.faa", condensed_df.iloc[t,0])
+                                          rpp_location_start, rpp_location_end = get_locations(args.aa, condensed_df.iloc[t,0])
                                           rpp_range = range(rpp_location_start,rpp_location_end)
 
                                           if range_subset(rpp_range, range(border_start, border_end)) == True:
@@ -596,7 +597,7 @@ with open(fasta_file, mode='r') as handle:
                         for l in range(len(condensed_df)):
                           if condensed_df.iloc[l,0].startswith(record.id):
                             if condensed_df.iloc[l,1].startswith('pri-rep'): # find prirep in df
-                              prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[l,0])
+                              prirep_location_start, prirep_location_end = get_locations(args.aa, condensed_df.iloc[l,0])
                               prirep_range = range(prirep_location_start,prirep_location_end)
                               prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
 
@@ -646,7 +647,7 @@ with open(fasta_file, mode='r') as handle:
                                     for r in range(len(condensed_df)):
                                       if condensed_df.iloc[r,0].startswith(record.id):
                                         if condensed_df.iloc[r,1].startswith('terS'): # find terS in df
-                                          terS_location_start, terS_location_end = get_locations("all.pdg.faa", condensed_df.iloc[r,0])
+                                          terS_location_start, terS_location_end = get_locations(args.aa, condensed_df.iloc[r,0])
                                           terS_range = range(terS_location_start,terS_location_end)
 
                                           if range_subset(terS_range, range(border_start, border_end)) == True:
@@ -656,7 +657,7 @@ with open(fasta_file, mode='r') as handle:
                                     for s in range(len(condensed_df)):
                                       if condensed_df.iloc[s,0].startswith(record.id):
                                         if condensed_df.iloc[s,1].startswith('ppi'): # find terS in df
-                                          ppi_location_start, ppi_location_end = get_locations("all.pdg.faa", condensed_df.iloc[s,0])
+                                          ppi_location_start, ppi_location_end = get_locations(args.aa, condensed_df.iloc[s,0])
                                           ppi_range = range(ppi_location_start,ppi_location_end)
 
                                           if range_subset(ppi_range, range(border_start, border_end)) == True:
@@ -666,7 +667,7 @@ with open(fasta_file, mode='r') as handle:
                                     for t in range(len(condensed_df)):
                                       if condensed_df.iloc[t,0].startswith(record.id):
                                         if condensed_df.iloc[t,1].startswith('rpp'): # find terS in df
-                                          rpp_location_start, rpp_location_end = get_locations("all.pdg.faa", condensed_df.iloc[t,0])
+                                          rpp_location_start, rpp_location_end = get_locations(args.aa, condensed_df.iloc[t,0])
                                           rpp_range = range(rpp_location_start,rpp_location_end)
 
                                           if range_subset(rpp_range, range(border_start, border_end)) == True:
@@ -727,8 +728,8 @@ with open(fasta_file, mode='r') as handle:
 
                       # Get protein locations in host
                       # get the location of sis and see if pri-rep is within 25 kb to left or right (50kb total)
-                      int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
-                      sis_location_start, sis_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
+                      int_location_start, int_location_end = get_locations(args.aa, condensed_df.iloc[i,0])
+                      sis_location_start, sis_location_end = get_locations(args.aa, condensed_df.iloc[k,0])
                       print('\nBeginning SaPI determination...')
                       print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
                       print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
@@ -765,7 +766,7 @@ with open(fasta_file, mode='r') as handle:
                         for l in range(len(condensed_df)):
                           if condensed_df.iloc[l,0].startswith(record.id):
                             if condensed_df.iloc[l,1].startswith('pri-rep'): # find prirep in df
-                              prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[l,0])
+                              prirep_location_start, prirep_location_end = get_locations(args.aa, condensed_df.iloc[l,0])
                               prirep_range = range(prirep_location_start,prirep_location_end)
                               prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
 
@@ -816,7 +817,7 @@ with open(fasta_file, mode='r') as handle:
                                     for r in range(len(condensed_df)):
                                       if condensed_df.iloc[r,0].startswith(record.id):
                                         if condensed_df.iloc[r,1].startswith('terS'): # find terS in df
-                                          terS_location_start, terS_location_end = get_locations("all.pdg.faa", condensed_df.iloc[r,0])
+                                          terS_location_start, terS_location_end = get_locations(args.aa, condensed_df.iloc[r,0])
                                           terS_range = range(terS_location_start,terS_location_end)
 
                                           if range_subset(terS_range, range(border_start, border_end)) == True:
@@ -826,7 +827,7 @@ with open(fasta_file, mode='r') as handle:
                                     for s in range(len(condensed_df)):
                                       if condensed_df.iloc[s,0].startswith(record.id):
                                         if condensed_df.iloc[s,1].startswith('ppi'): # find terS in df
-                                          ppi_location_start, ppi_location_end = get_locations("all.pdg.faa", condensed_df.iloc[s,0])
+                                          ppi_location_start, ppi_location_end = get_locations(args.aa, condensed_df.iloc[s,0])
                                           ppi_range = range(ppi_location_start,ppi_location_end)
 
                                           if range_subset(ppi_range, range(border_start, border_end)) == True:
@@ -836,7 +837,7 @@ with open(fasta_file, mode='r') as handle:
                                     for t in range(len(condensed_df)):
                                       if condensed_df.iloc[t,0].startswith(record.id):
                                         if condensed_df.iloc[t,1].startswith('rpp'): # find terS in df
-                                          rpp_location_start, rpp_location_end = get_locations("all.pdg.faa", condensed_df.iloc[t,0])
+                                          rpp_location_start, rpp_location_end = get_locations(args.aa, condensed_df.iloc[t,0])
                                           rpp_range = range(rpp_location_start,rpp_location_end)
 
                                           if range_subset(rpp_range, range(border_start, border_end)) == True:
@@ -887,7 +888,7 @@ with open(fasta_file, mode='r') as handle:
                         for l in range(len(condensed_df)):
                           if condensed_df.iloc[l,0].startswith(record.id):
                             if condensed_df.iloc[l,1].startswith('pri-rep'): # find prirep in df
-                              prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[l,0])
+                              prirep_location_start, prirep_location_end = get_locations(args.aa, condensed_df.iloc[l,0])
                               prirep_range = range(prirep_location_start,prirep_location_end)
                               prirep_prot_num = int((condensed_df.iloc[l,0]).split('_')[-1])
 
@@ -939,7 +940,7 @@ with open(fasta_file, mode='r') as handle:
                                     for r in range(len(condensed_df)):
                                       if condensed_df.iloc[r,0].startswith(record.id):
                                         if condensed_df.iloc[r,1].startswith('terS'): # find terS in df
-                                          terS_location_start, terS_location_end = get_locations("all.pdg.faa", condensed_df.iloc[r,0])
+                                          terS_location_start, terS_location_end = get_locations(args.aa, condensed_df.iloc[r,0])
                                           terS_range = range(terS_location_start,terS_location_end)
 
                                           if range_subset(terS_range, range(border_start, border_end)) == True:
@@ -949,7 +950,7 @@ with open(fasta_file, mode='r') as handle:
                                     for s in range(len(condensed_df)):
                                       if condensed_df.iloc[s,0].startswith(record.id):
                                         if condensed_df.iloc[s,1].startswith('ppi'): # find terS in df
-                                          ppi_location_start, ppi_location_end = get_locations("all.pdg.faa", condensed_df.iloc[s,0])
+                                          ppi_location_start, ppi_location_end = get_locations(args.aa, condensed_df.iloc[s,0])
                                           ppi_range = range(ppi_location_start,ppi_location_end)
 
                                           if range_subset(ppi_range, range(border_start, border_end)) == True:
@@ -959,7 +960,7 @@ with open(fasta_file, mode='r') as handle:
                                     for t in range(len(condensed_df)):
                                       if condensed_df.iloc[t,0].startswith(record.id):
                                         if condensed_df.iloc[t,1].startswith('rpp'): # find terS in df
-                                          rpp_location_start, rpp_location_end = get_locations("all.pdg.faa", condensed_df.iloc[t,0])
+                                          rpp_location_start, rpp_location_end = get_locations(args.aa, condensed_df.iloc[t,0])
                                           rpp_range = range(rpp_location_start,rpp_location_end)
 
                                           if range_subset(rpp_range, range(border_start, border_end)) == True:
@@ -1029,8 +1030,8 @@ with open(fasta_file, mode='r') as handle:
 
                       # Get protein locations in host
                       # get the location of pri-rep and see if pri-rep is within 25 kb to left or right (50kb total)
-                      int_location_start, int_location_end = get_locations("all.pdg.faa", condensed_df.iloc[i,0])
-                      prirep_location_start, prirep_location_end = get_locations("all.pdg.faa", condensed_df.iloc[k,0])
+                      int_location_start, int_location_end = get_locations(args.aa, condensed_df.iloc[i,0])
+                      prirep_location_start, prirep_location_end = get_locations(args.aa, condensed_df.iloc[k,0])
                       print('\nBeginning phage satellite determination...')
                       print('Int ({}) start: {}'.format(int_prot_num, int_location_start))
                       print('Int ({}) end: {}'.format(int_prot_num, int_location_end))
@@ -1087,7 +1088,7 @@ with open(fasta_file, mode='r') as handle:
                           for r in range(len(condensed_df)):
                             if condensed_df.iloc[r,0].startswith(record.id):
                               if condensed_df.iloc[r,1].startswith('terS'): # find terS in df
-                                terS_location_start, terS_location_end = get_locations("all.pdg.faa", condensed_df.iloc[r,0])
+                                terS_location_start, terS_location_end = get_locations(args.aa, condensed_df.iloc[r,0])
                                 terS_range = range(terS_location_start,terS_location_end)
 
                                 if range_subset(terS_range, range(border_start, border_end)) == True:
@@ -1097,7 +1098,7 @@ with open(fasta_file, mode='r') as handle:
                           for s in range(len(condensed_df)):
                             if condensed_df.iloc[s,0].startswith(record.id):
                               if condensed_df.iloc[s,1].startswith('ppi'): # find terS in df
-                                ppi_location_start, ppi_location_end = get_locations("all.pdg.faa", condensed_df.iloc[s,0])
+                                ppi_location_start, ppi_location_end = get_locations(args.aa, condensed_df.iloc[s,0])
                                 ppi_range = range(ppi_location_start,ppi_location_end)
 
                                 if range_subset(ppi_range, range(border_start, border_end)) == True:
@@ -1107,7 +1108,7 @@ with open(fasta_file, mode='r') as handle:
                             for t in range(len(condensed_df)):
                               if condensed_df.iloc[t,0].startswith(record.id):
                                 if condensed_df.iloc[t,1].startswith('rpp'): # find terS in df
-                                  rpp_location_start, rpp_location_end = get_locations("all.pdg.faa", condensed_df.iloc[t,0])
+                                  rpp_location_start, rpp_location_end = get_locations(args.aa, condensed_df.iloc[t,0])
                                   rpp_range = range(rpp_location_start,rpp_location_end)
 
                                   if range_subset(rpp_range, range(border_start, border_end)) == True:
@@ -1198,7 +1199,7 @@ with open(fasta_file, mode='r') as handle:
                           for r in range(len(condensed_df)):
                             if condensed_df.iloc[r,0].startswith(record.id):
                               if condensed_df.iloc[r,1].startswith('terS'): # find terS in df
-                                terS_location_start, terS_location_end = get_locations("all.pdg.faa", condensed_df.iloc[r,0])
+                                terS_location_start, terS_location_end = get_locations(args.aa, condensed_df.iloc[r,0])
                                 terS_range = range(terS_location_start,terS_location_end)
 
                                 if range_subset(terS_range, range(border_start, border_end)) == True:
@@ -1208,7 +1209,7 @@ with open(fasta_file, mode='r') as handle:
                           for s in range(len(condensed_df)):
                             if condensed_df.iloc[s,0].startswith(record.id):
                               if condensed_df.iloc[s,1].startswith('ppi'): # find terS in df
-                                ppi_location_start, ppi_location_end = get_locations("all.pdg.faa", condensed_df.iloc[s,0])
+                                ppi_location_start, ppi_location_end = get_locations(args.aa, condensed_df.iloc[s,0])
                                 ppi_range = range(ppi_location_start,ppi_location_end)
 
                                 if range_subset(ppi_range, range(border_start, border_end)) == True:
@@ -1218,7 +1219,7 @@ with open(fasta_file, mode='r') as handle:
                             for t in range(len(condensed_df)):
                               if condensed_df.iloc[t,0].startswith(record.id):
                                 if condensed_df.iloc[t,1].startswith('rpp'): # find terS in df
-                                  rpp_location_start, rpp_location_end = get_locations("all.pdg.faa", condensed_df.iloc[t,0])
+                                  rpp_location_start, rpp_location_end = get_locations(args.aa, condensed_df.iloc[t,0])
                                   rpp_range = range(rpp_location_start,rpp_location_end)
 
                                   if range_subset(rpp_range, range(border_start, border_end)) == True:
