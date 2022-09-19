@@ -112,7 +112,7 @@ do
         	        
         	        
         	        # Run PICI typer script 
-        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity --blast "${TEMP}/tBLASTn_results.out" --fasta "${TEMP}/all.fna" --output "${TEMP}/PICI_results"
+        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity --blast "${TEMP}/tBLASTn_results.out" --fasta "${TEMP}/all.fna" --output "${TEMP}/PICI_results" --aa "${TEMP}/python/all.pdg.faa" --temp ${TEMP}
 			
 			# Remove duplicates
 			python ${scripts_path}/duplicate_remover.py --input "${TEMP}/PICI_results" --output "${TEMP}/PICI_results"

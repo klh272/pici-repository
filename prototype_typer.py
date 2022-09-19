@@ -14,6 +14,7 @@ from Bio.Blast.Applications import NcbiblastpCommandline
 ##########################################################################################################################################################################
 
 parser = argparse.ArgumentParser()
+parser.add_argument('--temp', type=pathlib.Path, required=True)
 parser.add_argument('--aa', type=pathlib.Path, default='all.pdg.faa')
 parser.add_argument('--blast', type=pathlib.Path, default='BLASTp_results.out')
 parser.add_argument('--fasta', type=pathlib.Path, default='all.fna')
@@ -71,7 +72,7 @@ def range_subset(range1, range2):
 
 ##########################################################################################################################################################################
 
-def get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record):
+def get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record, temp):
 	"""This function determines the border (start and end coordinates) of a PICI/phage satellite by looking for paired attachement sites. If not attachment sites are 
 	found then it will resort to a lower-quality trim."""
 
@@ -91,8 +92,8 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		SeqIO.write(tail_seq, "tail_seq", "fasta")
 
 		# Run BLAST
-		setupDB = "formatdb -p F -i tail_seq -n tail_seq -o T"
-		cmd = "blastall -p blastn -d ./tail_seq -i ./head_seq -o ./BLAST_for_border -m 8 -S 3 -v 4 -b 4 -a 2 -F T"
+		setupDB = "formatdb -p F -i " + temp + "/tail_seq -n " + temp + "/tail_seq -o T"
+		cmd = "blastall -p blastn -d " + temp + "/tail_seq -i " + temp + "/head_seq -o " + temp + "/BLAST_for_border -m 8 -S 3 -v 4 -b 4 -a 2 -F T"
 		os.system(setupDB)
 		os.system(cmd)
 
@@ -101,7 +102,7 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		seq_trim_end = int(record.description.split(';')[3])
 		trim_list = [*range(int(seq_trim_start), int(seq_trim_end)+1, 1)]
 
-		if os.stat('BLAST_for_border').st_size == 0:
+		if os.stat(temp + '/BLAST_for_border').st_size == 0:
 			print("No suitable attachment site found. Using a lower-quality border.")
 
 			final_seq_start = trim_list[pici_low_limit]
@@ -122,7 +123,7 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		else:
 			print("Potential attatchment sites found...")
 
-			border_df = pd.read_csv('BLAST_for_border', sep='\t', header = None)
+			border_df = pd.read_csv(temp + '/BLAST_for_border', sep='\t', header = None)
 
 			if (pici_low_limit + int(border_df.iloc[0,6])-1) < 0:
 				final_seq_start = trim_list[pici_low_limit]
@@ -200,12 +201,12 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		tail_seq = SeqRecord(record.seq[pici_low_limit:prirep_location_start], id="tail_seq")
 
 		#Write two sequences to files
-		SeqIO.write(head_seq, "head_seq", "fasta")
-		SeqIO.write(tail_seq, "tail_seq", "fasta")
+		SeqIO.write(head_seq, temp + "/head_seq", "fasta")
+		SeqIO.write(tail_seq, temp + "/tail_seq", "fasta")
 
 		# Run BLAST
-		setupDB = "formatdb -p F -i tail_seq -n tail_seq -o T"
-		cmd = "blastall -p blastn -d ./tail_seq -i ./head_seq -o ./BLAST_for_border -m 8 -S 3 -v 4 -b 4 -a 2 -F T"
+		setupDB = "formatdb -p F -i "+ temp + "/tail_seq -n tail_seq -o T"
+		cmd = "blastall -p blastn -d "+ temp + "/tail_seq -i "+ temp + "/head_seq -o "+ temp + "/BLAST_for_border -m 8 -S 3 -v 4 -b 4 -a 2 -F T"
 		os.system(setupDB)
 		os.system(cmd)
 
@@ -214,7 +215,7 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		seq_trim_end = int(record.description.split(';')[3])
 		trim_list = [*range(int(seq_trim_start), int(seq_trim_end)+1, 1)]
 
-		if os.stat('BLAST_for_border').st_size == 0:
+		if os.stat(temp + '/BLAST_for_border').st_size == 0:
 			print("No suitable attachment site found. Using a lower-quality border.")
 
 			final_seq_start = trim_list[pici_low_limit]
@@ -232,7 +233,7 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		else:
 			print("Potential attatchment sites found...")
 
-			border_df = pd.read_csv('BLAST_for_border', sep='\t', header = None)
+			border_df = pd.read_csv(temp + '/BLAST_for_border', sep='\t', header = None)
 
 			if (pici_low_limit + int(border_df.iloc[0,8])-1) < 0:
 				final_seq_start = trim_list[pici_low_limit]
@@ -486,7 +487,7 @@ with open(fasta_file, mode='r') as handle:
                                   if pici_high_limit > len(trim_list)-1:
                                     continue
                                   else:
-                                    quality, att_C, attL_start, attL_end, attR_start, attR_end, border_start, border_end, final_seq_start, final_seq_end = get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record)
+                                    quality, att_C, attL_start, attL_end, attR_start, attR_end, border_start, border_end, final_seq_start, final_seq_end = get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record, args.temp)
 
 
                                     # Look for things like terS, rpp, and ppi in the new region
