@@ -1,5 +1,5 @@
 #! /bin/sh
-set -x
+#set -x
 # Set up your projects in the "data" directory
 # For example: ./data/EXAMPLE_PROJECT_NAME
 # Inside EXAMPLE_PROJECT_NAME is where your sequences, PICIs, and VirSorter2/BLAST results will be stored for that project
@@ -148,40 +148,32 @@ elif [ "$database" -eq "1" ]; then
 	blastn -query ${dir_in}/results//Phage_Satellites.fasta -subject ${db_nuc_path} -task blastn -evalue 0.001 -outfmt 6 -out ${TEMP}/satellite_BLAST_results.out
 fi
 python ${scripts_path}/phage_satellite_review.py --a $alpa_identity --output-gram-negative ${dir_in}/results/G_neg_PICI_reviewed --output-reviewed ${dir_in}/results/phage_satellite_reviewed --blast ${TEMP}/satellite_BLAST_results.out --fasta ${dir_in}/results/Phage_Satellites.fasta
-sed -i -- 's/phage_satellite/G_neg_PICI/g' ./G_neg_PICI_reviewed
-cat G_neg_PICI_reviewed G_neg_PICIs.fasta SaPIs.fasta phage_satellite_reviewed > new_ALL_PICIs.fasta
-mv new_ALL_PICIs.fasta ALL_PICIs.fasta
-cat G_neg_PICI_reviewed G_neg_PICIs.fasta > new_G_neg_PICIs.fasta
-mv new_G_neg_PICIs.fasta G_neg_PICIs.fasta
-mv phage_satellite_reviewed ./Phage_Satellites.fasta
-rm G_neg_PICI_reviewed
+sed -i -- 's/phage_satellite/G_neg_PICI/g' ${dir_in}/results//G_neg_PICI_reviewed
+cat ${dir_in}/results/G_neg_PICI_reviewed ${dir_in}/results/G_neg_PICIs.fasta ${dir_in}/results/SaPIs.fasta ${dir_in}/results/phage_satellite_reviewed > ${dir_in}/results/ALL_PICIs.fasta
+#mv new_ALL_PICIs.fasta ALL_PICIs.fasta
+#cat G_neg_PICI_reviewed G_neg_PICIs.fasta > new_G_neg_PICIs.fasta
+#mv new_G_neg_PICIs.fasta G_neg_PICIs.fasta
+#mv phage_satellite_reviewed ./Phage_Satellites.fasta
+#rm G_neg_PICI_reviewed
 
 
-echo "Collecting host genomes..."
-./../../scripts/genome_collector.sh
+#echo "Collecting host genomes..."
+#./../../scripts/genome_collector.sh
 
 echo "Creating table..."
-cat $(basename "$PWD")_ALL_PICIs.fasta | grep -e "^>" | sed 's/>//g' | sed 's/;/\t/g' > $(basename "$PWD")_PICI_table.tsv
+cat ${dir_in}/results/ALL_PICIs.fasta | grep -e "^>" | sed 's/>//g' | sed 's/;/\t/g' > ${dir_in}/results/PICI_table.tsv
 
 echo "Done."
 
 
 
-if [ "$output" == "." ]; then
-        continue
-else
-        mkdir $dir_out/$output/
-        mv $(basename "$PWD")_ALL_PICIs.fasta $dir_out/$output/${output}_ALL_PICIs.fasta
-        mv $(basename "$PWD")_G_neg_PICIs.fasta $dir_out/$output/${output}_G_neg_PICIs.fasta
-        #mv $(basename "$PWD")_SaPIs.fasta $dir_out/$output/${output}_SaPIs.fasta
-        mv $(basename "$PWD")_Phage_Satellites.fasta $dir_out/$output/${output}_Phage_Satellites.fasta
-        mv $(basename "$PWD")_PICI_table.tsv $dir_out/$output/${output}_PICI_table.tsv
-        mv $(basename "$PWD")_ALL_PICIs_host_genomes.fasta $dir_out/$output/${output}_ALL_PICIs_host_genomes.fasta
-        mv $(basename "$PWD")_G_neg_PICIs_host_genomes.fasta $dir_out/$output/${output}_G_neg_PICIs_host_genomes.fasta
-        mv $(basename "$PWD")_Phage_Satellites_host_genomes.fasta $dir_out/$output/${output}_Phage_Satellites_host_genomes.fasta
-        mv $(basename "$PWD")_ALL_PICIs_host_names.txt $dir_out/$output/${output}_ALL_PICIs_host_names.txt
-        mv $(basename "$PWD")_G_neg_PICIs_host_names.txt $dir_out/$output/${output}_G_neg_PICIs_host_names.txt
-        mv $(basename "$PWD")_Phage_Satellites_host_names.txt $dir_out/$output/${output}_Phage_Satellites_host_names.txt
+#if [ "$output" == "." ]; then
+#        continue
+prefix=$(basename ${dir_in})
 
-fi
+for file in $(ls -p  ${dir_in}/results/ | grep -v /)
+do
+    mv ${dir_in}/results/${file} ${dir_in}/results/${prefix}_${file}
+done
+
 
