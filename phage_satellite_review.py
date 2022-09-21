@@ -1,20 +1,23 @@
 import re
 import pandas as pd
 from Bio import SeqIO
-
+import pathlib
 import argparse
 
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
-
+parser.add_argument("--fasta", type=pathlib.Path, default='Phage_Satellites.fasta')
+parser.add_argument("--blast", type=pathlib.Path, default='BLAST_results.out')
+parser.add_argument("--output-gram-negative", type=pathlib.Path, default='G_neg_PICI_reviewed')
+parser.add_argument("--output-reviewed", type=pathlib.Path, default='phage_satellite_reviewed')
 args = parser.parse_args()
 
 print('AlpA Identity percentage:', args.a)
 
 
 # read in BLAST alignment output
-df = pd.read_csv('BLAST_results.out', sep='\t', header = None)
+df = pd.read_csv(args.blast, sep='\t', header = None)
 
 #for i in range(len(df)):
 #  df.iloc[i,1] = re.split('(\d+)', df.iloc[i,1])[0] 
@@ -37,7 +40,7 @@ satellite_name_list = []
 satellite_seq_list = []
 satellite_desc_list = []
 
-fasta_file = 'Phage_Satellites.fasta'
+fasta_file = args.fasta
 with open(fasta_file, mode='r') as handle:
   
   for record in SeqIO.parse(handle, 'fasta'):
@@ -63,7 +66,7 @@ with open(fasta_file, mode='r') as handle:
         else:
           continue
 
-fasta_file = 'Phage_Satellites.fasta'
+
 with open(fasta_file, mode='r') as handle:
 
 	for record in SeqIO.parse(handle, 'fasta'):
@@ -76,7 +79,7 @@ print(f"G- PICIs detected and changed: {len(neg_seq_list)}")
 print(f"Phage satellites confirmed: {len(satellite_seq_list)}")
 
 # write PICI sequence to file
-neg_PICI_file = open("G_neg_PICI_reviewed", "w")
+neg_PICI_file = open(args.output_gram_negative, "w")
 
 for m in range(len(neg_seq_list)):
   neg_PICI_file.write(">"  + str(neg_desc_list[m]) + "\n" + str(neg_seq_list[m]) + "\n")
@@ -84,7 +87,7 @@ for m in range(len(neg_seq_list)):
 neg_PICI_file.close()
 
 
-phage_satellite_file = open("phage_satellite_reviewed", "w")
+phage_satellite_file = open(args.output_reviewed, "w")
 
 for n in range(len(satellite_seq_list)):
   phage_satellite_file.write(">"  + str(satellite_desc_list[n]) + "\n" + str(satellite_seq_list[n]) + "\n")

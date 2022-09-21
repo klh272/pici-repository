@@ -143,11 +143,11 @@ python ${scripts_path}/pici_separator.py --input ${dir_in}/results/ALL_PICIs.fas
 
 echo "Reviewing phage satellites..."
 if [ "$database" -eq "0" ]; then
-	blastx -query ./Phage_Satellites.fasta -subject ${db_prot_path} -task blastx -evalue 0.001 -outfmt 6 -out BLAST_results.out
+	blastx -query ${dir_in}/results/Phage_Satellites.fasta -subject ${db_prot_path} -task blastx -evalue 0.001 -outfmt 6 -out ${TEMP}/satellite_BLAST_results.out
 elif [ "$database" -eq "1" ]; then
-	blastn -query ./Phage_Satellites.fasta -subject ${db_nuc_path} -task blastn -evalue 0.001 -outfmt 6 -out BLAST_results.out
+	blastn -query ${dir_in}/results//Phage_Satellites.fasta -subject ${db_nuc_path} -task blastn -evalue 0.001 -outfmt 6 -out ${TEMP}/satellite_BLAST_results.out
 fi
-python ${scripts_path}/phage_satellite_review.py --a $alpa_identity
+python ${scripts_path}/phage_satellite_review.py --a $alpa_identity --output-gram-negative ${dir_in}/results/G_neg_PICI_reviewed --output-reviewed ${dir_in}/results/phage_satellite_reviewed --blast ${TEMP}/satellite_BLAST_results.out --fasta ${dir_in}/results/Phage_Satellites.fasta
 sed -i -- 's/phage_satellite/G_neg_PICI/g' ./G_neg_PICI_reviewed
 cat G_neg_PICI_reviewed G_neg_PICIs.fasta SaPIs.fasta phage_satellite_reviewed > new_ALL_PICIs.fasta
 mv new_ALL_PICIs.fasta ALL_PICIs.fasta
