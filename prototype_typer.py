@@ -23,7 +23,7 @@ parser.add_argument('--i', nargs='?', const=1, type=int, default=70)
 parser.add_argument('--a', nargs='?', const=1, type=int, default=50)
 
 args = parser.parse_args()
-
+args.temp = str(args.temp)
 print('Int Identity percentage:', args.i)
 print('AlpA Identity percentage:', args.a)
 
@@ -84,12 +84,13 @@ def get_PICI_border(int_location_start, int_location_end, prirep_location_start,
 		print("+ orientation")
 
 		# Get your head and tail sequence (regions in front of int and after prirep)
-		head_seq = SeqRecord(record.seq[pici_low_limit:int_location_start], id="head_seq")
-		tail_seq = SeqRecord(record.seq[prirep_location_end:pici_high_limit], id="tail_seq")
+		head_seq = SeqRecord(record.seq[pici_low_limit:int_location_start], id="head_seq"); 
+		tail_seq = SeqRecord(record.seq[prirep_location_end:pici_high_limit], id="tail_seq");
 
 		#Write two sequences to files
-		SeqIO.write(head_seq, "head_seq", "fasta")
-		SeqIO.write(tail_seq, "tail_seq", "fasta")
+
+		SeqIO.write(head_seq, temp + "/head_seq", "fasta"); 
+		SeqIO.write(tail_seq, temp + "/tail_seq", "fasta")
 
 		# Run BLAST
 		setupDB = "formatdb -p F -i " + temp + "/tail_seq -n " + temp + "/tail_seq -o T"
@@ -362,7 +363,6 @@ fasta_file = args.fasta
 with open(fasta_file, mode='r') as handle:
   
   for record in SeqIO.parse(handle, 'fasta'):
-
     for i in range(len(condensed_df)):
       if condensed_df.iloc[i,0].startswith(record.id): # ensures same sequence in multi-sequence fasta file is being used
         if condensed_df.iloc[i,1].startswith('int'): # find integrases in df
@@ -800,13 +800,14 @@ with open(fasta_file, mode='r') as handle:
                                   #get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record)
 
                                   # add PICI to list
+                                  print(record.description.split(';'))
                                   trim_start = int(record.description.split(';')[2])
                                   trim_end = int(record.description.split(';')[3])
                                   trim_list = [*range(int(trim_start), int(trim_end)+1, 1)]
                                   if pici_high_limit > len(trim_list)-1:
                                     continue
                                   else:
-                                    quality, att_C, attL_start, attL_end, attR_start, attR_end, border_start, border_end, final_seq_start, final_seq_end = get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record)
+                                    quality, att_C, attL_start, attL_end, attR_start, attR_end, border_start, border_end, final_seq_start, final_seq_end = get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record, args.temp)
 
                                     # Look for things like terS, rpp, and ppi in the new region
                                     # 0 = not present, 1 = present

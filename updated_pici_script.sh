@@ -112,7 +112,7 @@ do
         	        
         	        
         	        # Run PICI typer script 
-        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity --blast "${TEMP}/tBLASTn_results.out" --fasta "${TEMP}/all.fna" --output "${TEMP}/PICI_results" --aa "${TEMP}/python/all.pdg.faa" --temp ${TEMP}
+        	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity --blast "${TEMP}/BLASTp_results.out" --fasta ${TEMP}/${TEMP_NAME} --output "${TEMP}/PICI_results" --aa "${TEMP}/python/all.pdg.faa" --temp ${TEMP}
 			
 			# Remove duplicates
 			python ${scripts_path}/duplicate_remover.py --input "${TEMP}/PICI_results" --output "${TEMP}/PICI_results"
@@ -125,7 +125,7 @@ do
 	fi
 done
 
-exit 1
+
 #Exit the typer if no PICIs were found
 if [ ! "$(ls -A ${dir_in}/results)" ]; then
     echo "${dir_in}/results is  empty"
