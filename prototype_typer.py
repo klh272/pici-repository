@@ -1189,7 +1189,7 @@ with open(fasta_file, mode='r') as handle:
                         if pici_high_limit > len(trim_list)-1:
                           continue
                         else:
-                          quality, att_C, attL_start, attL_end, attR_start, attR_end, border_start, border_end, final_seq_start, final_seq_end = get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record)
+                          quality, att_C, attL_start, attL_end, attR_start, attR_end, border_start, border_end, final_seq_start, final_seq_end = get_PICI_border(int_location_start, int_location_end, prirep_location_start, prirep_location_end, pici_low_limit, pici_high_limit, orientation, record, args.temp)
 
                           # Look for things like terS, rpp, and ppi in the new region
                           # 0 = not present, 1 = present
