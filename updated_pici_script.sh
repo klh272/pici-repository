@@ -118,7 +118,7 @@ do
 			python ${scripts_path}/duplicate_remover.py --input "${TEMP}/PICI_results" --output "${TEMP}/PICI_results"
         	        
         	        # Move PICI results to PICI directory
-        	        mv "${TEMP}/PICI_results" "${dir_in}/tmp_PICIs/"
+        	        mv "${TEMP}/PICI_results" "${dir_in}/tmp_PICIs/${TEMP_NAME}/"
         	        #cd ../../../
         	        echo "Finished ${TEMP_NAME}..."
         	fi
@@ -135,17 +135,11 @@ fi
 
 echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
 #${scripts_path}/scripts/pici_collector.sh
-touch "${TEMP}/ALL_PICIs.fasta"
-
-for f in ./PICIs/*
-do
-        cat ./PICIs/${f##*/}/PICI_results >> ALL_PICIs.fasta
-
-done
+find ${dir_in}/tmp_PICIs/ -name PICI_results -exec cat {} \; >> ${dir_in}/results/ALL_PICIs.fasta
 
 
 echo "Separating PICI type and phage satellites..."
-python ${scripts_path}/scripts/pici_separator.py
+python ${scripts_path}/pici_separator.py --input ${dir_in}/results/ALL_PICIs.fasta --output ${dir_in}/results/
 
 echo "Reviewing phage satellites..."
 if [ "$database" -eq "0" ]; then
@@ -153,7 +147,7 @@ if [ "$database" -eq "0" ]; then
 elif [ "$database" -eq "1" ]; then
 	blastn -query ./Phage_Satellites.fasta -subject ${db_nuc_path} -task blastn -evalue 0.001 -outfmt 6 -out BLAST_results.out
 fi
-python ${scripts_path}/scripts/phage_satellite_review.py --a $alpa_identity
+python ${scripts_path}/phage_satellite_review.py --a $alpa_identity
 sed -i -- 's/phage_satellite/G_neg_PICI/g' ./G_neg_PICI_reviewed
 cat G_neg_PICI_reviewed G_neg_PICIs.fasta SaPIs.fasta phage_satellite_reviewed > new_ALL_PICIs.fasta
 mv new_ALL_PICIs.fasta ALL_PICIs.fasta
