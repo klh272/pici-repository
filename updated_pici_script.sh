@@ -1,12 +1,4 @@
 #! /bin/sh
-#set -x
-# Set up your projects in the "data" directory
-# For example: ./data/EXAMPLE_PROJECT_NAME
-# Inside EXAMPLE_PROJECT_NAME is where your sequences, PICIs, and VirSorter2/BLAST results will be stored for that project
-# In EXAMPLE_PROJECT_NAME set up a child directory "sequences" with all your data (./sequences/EXAMPLE_DATA.fasta)
-# Make sure when you run this script you are in the parent directory of "sequences" (EXAMPLE_PROJECT_NAME)
-# Make sure there is ONLY fasta files in your "sequences" directory
-
 
 scripts_path=$(dirname $(readlink -f $0))
 db_nuc_path=./../../../databases/derived/BLAST_nucleotide_db.fna
