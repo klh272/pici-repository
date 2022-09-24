@@ -63,7 +63,7 @@ do
                 	tblastn -query ${db_prot_path} -subject ${TEMP_FASTA} -task tblastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out"
                 elif [ "$database" -eq "1" ]; then
         		echo "Performing BLASTn on ${TEMP_NAME}..."
-        		blastn -query ${db_nuc_path} -subject ${TEMP_FASTA} -task blastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out"
+        		blastn -query ${db_nuc_path} -subject ${TEMP_FASTA} -task blastn -evalue 0.001 -outfmt 6 -out "${TEMP}/tBLASTn_results.out" #TODO: is this output name correct?
         	fi
 
         	# Run integrase trimmer (calls the script in the data
@@ -72,17 +72,12 @@ do
         	
         	# If no integrases >= 90% identity then stop the current iteration
         	if ! [ -s "${TEMP}/trimmed_file" ]; then
-
-        	        #rm -r ${TEMP} 
         	        echo "Terminating ${TEMP_NAME}: no match for integrase..."
         	        continue
-
         	# else continue with script
         	else
         	       # convert trimmed file back to original filename
         	        cp "${TEMP}/trimmed_file" ${TEMP}/${TEMP_NAME} #WTF
-        	     #   cd ..
-
 			# Run Prodigal
 			echo "Running Prodigal on ${TEMP_NAME}..."
 			mkdir -p ${dir_in}/tmp_PICIs/${TEMP_NAME}
@@ -91,11 +86,8 @@ do
 			AAFILE=${dir_in}/results/${TEMP_NAME}/all.pdg.faa
 			
 			cp ${TEMP}/${TEMP_NAME} ${dir_in}/results/${TEMP_NAME} # this will preserve host info
-			#rm -r tmp
-        	        
         	        # Run Blastp 
         	        echo "Performing BLASTp on ${f##*/}..."
-        	      #  cd results/${f##*/}/
                         if [ "$database" -eq "0" ]; then
         	        	blastp -query ${dir_in}/results/${TEMP_NAME}/all.pdg.faa -db ${db_blastp_path} -task blastp -evalue 0.001 -outfmt 6 -out ${TEMP}/BLASTp_results.out
         	        elif [ "$database" -eq "1" ]; then
@@ -107,10 +99,7 @@ do
 			cp ${sequences_dir}/${TEMP_NAME} ${TEMP}/python # Preserves host info
         	        cp ${AAFILE} ${TEMP}/python
         	        cp ${TEMP}/BLASTp_results.out ${TEMP}/python
-        	       # cd python
-			#mv ${f##*/} all.fna #WTF, think it should be covered above
-        	        
-        	        
+
         	        # Run PICI typer script 
         	        python ${scripts_path}/prototype_typer.py --i $integrase_identity --a $alpa_identity --blast "${TEMP}/BLASTp_results.out" --fasta ${TEMP}/${TEMP_NAME} --output "${TEMP}/PICI_results" --aa "${TEMP}/python/all.pdg.faa" --temp ${TEMP}
 			
@@ -119,7 +108,6 @@ do
         	        
         	        # Move PICI results to PICI directory
         	        mv "${TEMP}/PICI_results" "${dir_in}/tmp_PICIs/${TEMP_NAME}/"
-        	        #cd ../../../
         	        echo "Finished ${TEMP_NAME}..."
         	fi
 	fi
@@ -134,7 +122,6 @@ fi
 
 
 echo "Compiling all PICIs into one file 'ALL_PICIs.fasta'..."
-#${scripts_path}/scripts/pici_collector.sh
 find ${dir_in}/tmp_PICIs/ -name PICI_results -exec cat {} \; >> ${dir_in}/results/ALL_PICIs.fasta
 
 
@@ -150,15 +137,6 @@ fi
 python ${scripts_path}/phage_satellite_review.py --a $alpa_identity --output-gram-negative ${dir_in}/results/G_neg_PICI_reviewed --output-reviewed ${dir_in}/results/phage_satellite_reviewed --blast ${TEMP}/satellite_BLAST_results.out --fasta ${dir_in}/results/Phage_Satellites.fasta
 sed -i -- 's/phage_satellite/G_neg_PICI/g' ${dir_in}/results//G_neg_PICI_reviewed
 cat ${dir_in}/results/G_neg_PICI_reviewed ${dir_in}/results/G_neg_PICIs.fasta ${dir_in}/results/SaPIs.fasta ${dir_in}/results/phage_satellite_reviewed > ${dir_in}/results/ALL_PICIs.fasta
-#mv new_ALL_PICIs.fasta ALL_PICIs.fasta
-#cat G_neg_PICI_reviewed G_neg_PICIs.fasta > new_G_neg_PICIs.fasta
-#mv new_G_neg_PICIs.fasta G_neg_PICIs.fasta
-#mv phage_satellite_reviewed ./Phage_Satellites.fasta
-#rm G_neg_PICI_reviewed
-
-
-#echo "Collecting host genomes..."
-#./../../scripts/genome_collector.sh
 
 echo "Creating table..."
 cat ${dir_in}/results/ALL_PICIs.fasta | grep -e "^>" | sed 's/>//g' | sed 's/;/\t/g' > ${dir_in}/results/PICI_table.tsv
@@ -166,9 +144,6 @@ cat ${dir_in}/results/ALL_PICIs.fasta | grep -e "^>" | sed 's/>//g' | sed 's/;/\
 echo "Done."
 
 
-
-#if [ "$output" == "." ]; then
-#        continue
 prefix=$(basename ${dir_in})
 
 for file in $(ls -p  ${dir_in}/results/ | grep -v /)
