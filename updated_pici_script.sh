@@ -99,6 +99,8 @@ do
 			python ${scripts_path}/duplicate_remover.py --input "${TEMP}/PICI_results" --output "${TEMP}/PICI_results"
         	        
         	        # Move PICI results to PICI directory
+			cp "${TEMP}/tBLASTn_results.out" "${dir_in}/tmp_PICIs/${TEMP_NAME}/"
+			cp ${TEMP}/BLASTp_results.out "${dir_in}/tmp_PICIs/${TEMP_NAME}/"
         	        mv "${TEMP}/PICI_results" "${dir_in}/tmp_PICIs/${TEMP_NAME}/"
         	        echo "Finished ${TEMP_NAME}..."
         	fi
